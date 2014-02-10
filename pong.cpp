@@ -7,6 +7,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <ctime>
+
 #include <iostream>
 using namespace std;
 
@@ -18,19 +20,50 @@ SDL_Texture*    font_image_score1;
 SDL_Texture*    font_image_score2;
 SDL_Color font_color = {255, 255, 255};
 
+// Screen resolution
 int SCREEN_WIDTH = 640;
 int SCREEN_HEIGHT = 480;
 
-int paddle1_offset = 0;
-int paddle2_offset = 0;
-
-int paddle1_position = SCREEN_HEIGHT / 2 - 30;
-int paddle2_position = SCREEN_HEIGHT / 2 - 30;
-
-int x, y;
 bool mouse = true;
 bool keyboard = false;
 
+// Mouse coordinates;
+int x, y;
+
+// Paddle lengths
+const int PADDLE_WIDTH = 10;
+const int PADDLE_HEIGHT = 60;
+
+// Paddle position
+int left_paddle_x = 40; 
+int left_paddle_y = SCREEN_HEIGHT / 2 - 30;
+
+int right_paddle_x = SCREEN_WIDTH - (40+PADDLE_WIDTH);
+int right_paddle_y = SCREEN_HEIGHT / 2 - 30;
+
+// Paddle movement
+int paddle1_offset = 0;
+int paddle2_offset = 0;
+
+
+// Ball movement indicator
+bool launch_ball = false;
+
+// Ball lengths
+const int BALL_WIDTH = 10;
+const int BALL_HEIGHT = 10;
+
+// Ball position
+int x_ball = SCREEN_WIDTH / 2;
+int y_ball = SCREEN_HEIGHT / 2;
+
+// Ball movement
+int x_movement = 0;
+int y_movement = 0;
+
+bool bounce = false;
+
+// Score 
 int score1 = 0;
 int score2 = 0;
 
@@ -98,6 +131,10 @@ void input() {
                     paddle1_offset = 5;
                     break;
 
+                case SDLK_RIGHT: SDLK_LEFT:
+                    x_movement = 4;
+                    break;
+
                 case SDLK_w:
                     paddle2_offset = -5;
                     break;
@@ -118,35 +155,80 @@ void input() {
     }
 }
 
+bool checkRightCollision() {
+    if (!(x_ball + BALL_WIDTH + x_movement >= right_paddle_x))
+        return false; 
+    if (x_ball > right_paddle_x + PADDLE_WIDTH)
+        return false;
+    if (!(y_ball + BALL_WIDTH > right_paddle_y && y_ball <= right_paddle_y + PADDLE_HEIGHT))
+        return false;
+    return true;
+}
+
+bool checkLeftCollision() {
+    if (!(x_ball + x_movement <= left_paddle_x + PADDLE_WIDTH))
+        return false;
+    if (x_ball < left_paddle_x)
+        return false;
+    if (!(y_ball + BALL_WIDTH >= left_paddle_y && y_ball <= left_paddle_y + PADDLE_HEIGHT))
+        return false;
+    return true;
+}
+
 void update() {
 
     // Playing with mouse
-    if (mouse) {
-        paddle2_position = y;
-        if (y + 60 > SCREEN_HEIGHT) {
-            score2++;
-            render_score2 = true;
-            paddle2_position = SCREEN_HEIGHT - 60;
-        }
-
+    if (mouse == true) {
+        right_paddle_y = y;
+        if (y + 60 > SCREEN_HEIGHT)
+            right_paddle_y = SCREEN_HEIGHT - 60;
+        // No need to anticipate the paddle going above the screen, mouse coordinates cannot be negative
     }
 
-    // Playing with keyboard
-    else if (keyboard) {
-        paddle1_position += paddle1_offset;
-        if (paddle1_position < 0)
-            paddle1_position -= paddle1_offset;
-        else if (paddle1_position > SCREEN_HEIGHT - 60)
-            paddle1_position -= paddle1_offset;
-        paddle1_offset = 0;
-
-        paddle2_position += paddle2_offset;
-        if (paddle2_position < 0)
-            paddle2_position -= paddle2_offset;
-        else if (paddle2_position > SCREEN_HEIGHT - 60)
-            paddle2_position -= paddle2_offset;
-        paddle2_offset = 0;
+    // Smooth paddle-ball collision
+    if (checkLeftCollision()) {
+            if (bounce) {
+                x_movement *= -1;
+                bounce = false;
+            }
+            x_ball = left_paddle_x + PADDLE_WIDTH;      // ball hits paddle on surface
+            bounce = true;
     }
+
+    else if (checkRightCollision()) {
+            if (bounce) {
+                x_movement *= -1;
+                bounce = false;
+            }
+            x_ball = right_paddle_x - BALL_WIDTH;       // ball hits paddle on surface
+            bounce = true;
+    }
+
+    // No collision occurs
+    else {
+        x_ball += x_movement;
+        y_ball += y_movement;
+    }
+
+    // If ball goes out...
+    if (x_ball < 0) {
+        score2++;
+        render_score2 = true;
+        cout << "Left paddle lost" << endl;
+        x_ball = SCREEN_WIDTH / 2;
+        y_ball = SCREEN_HEIGHT / 2;
+        x_movement = 0;
+    }
+
+    else if (x_ball > SCREEN_WIDTH) {
+        score1++;
+        render_score1 = true;
+        cout << "Right paddle lost" << endl;
+        x_ball = SCREEN_WIDTH / 2;
+        y_ball = SCREEN_HEIGHT / 2;
+        x_movement = 0;
+    }
+
 }
 
 void render() {
@@ -155,13 +237,13 @@ void render() {
     SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
     SDL_RenderClear(renderer);
 
-    // Render white filled quad
-    SDL_Rect paddle1 = { 40, paddle1_position, 20, 60 };
+    // Render white filled paddle
+    SDL_Rect paddle1 = { left_paddle_x, left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT };
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderFillRect( renderer, &paddle1 );
 
-    // Render white filled quad
-    SDL_Rect paddle2 = { SCREEN_WIDTH-60, paddle2_position, 20, 60 };
+    // Render white filled paddle
+    SDL_Rect paddle2 = { right_paddle_x, right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT };
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderFillRect( renderer, &paddle2 );
 
@@ -179,12 +261,10 @@ void render() {
     }
 
     // Render scores
-
     if (render_score1) {
         font_image_score1 = renderText(to_string(score1), "FFFFORWA.TTF", font_color, 24, renderer);
         render_score1 = false;
     }
-
     renderTexture(font_image_score1, renderer, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8);
 
     if (render_score2) {
@@ -192,10 +272,14 @@ void render() {
         render_score2 = false;
 
     }
-
     renderTexture(font_image_score2, renderer, SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 8);
 
-    // Update screen
+    // Render ball
+    SDL_Rect ball = { x_ball, y_ball, BALL_WIDTH, BALL_HEIGHT };
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, &ball);
+
+    // Swap buffers
     SDL_RenderPresent(renderer);
 
 }
@@ -241,6 +325,7 @@ void initialize() {
 
 int main() {
 
+    srand(time(NULL));
     initialize();
     gameLoop();
 
