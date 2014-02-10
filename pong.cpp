@@ -131,8 +131,9 @@ void input() {
                     paddle1_offset = 5;
                     break;
 
-                case SDLK_RIGHT: SDLK_LEFT:
-                    x_movement = 4;
+                case SDLK_SPACE:
+                    x_movement = 5;
+                    y_movement = rand()%6-3;
                     break;
 
                 case SDLK_w:
@@ -180,12 +181,22 @@ void update() {
     // Playing with mouse
     if (mouse == true) {
         right_paddle_y = y;
-        if (y + 60 > SCREEN_HEIGHT)
-            right_paddle_y = SCREEN_HEIGHT - 60;
-        // No need to anticipate the paddle going above the screen, mouse coordinates cannot be negative
     }
 
-    // Smooth paddle-ball collision
+    // AI: left paddle follows the ball
+    left_paddle_y = y_ball - PADDLE_HEIGHT / 2;
+
+    if (right_paddle_y + 60 > SCREEN_HEIGHT)
+        right_paddle_y = SCREEN_HEIGHT - 60;
+    // No need to anticipate the paddle going above the screen, mouse coordinates cannot be negative
+
+    if (left_paddle_y < 0)
+        left_paddle_y = 0;
+    else if (left_paddle_y + 60 > SCREEN_HEIGHT)
+        left_paddle_y = SCREEN_HEIGHT - 60;
+
+
+    // Smooth left paddle-ball collision
     if (checkLeftCollision()) {
             if (bounce) {
                 x_movement *= -1;
@@ -195,6 +206,7 @@ void update() {
             bounce = true;
     }
 
+    // Smooth right paddle-ball collision
     else if (checkRightCollision()) {
             if (bounce) {
                 x_movement *= -1;
@@ -203,6 +215,10 @@ void update() {
             x_ball = right_paddle_x - BALL_WIDTH;       // ball hits paddle on surface
             bounce = true;
     }
+
+    // Upper and bottom walls collision
+    else if ( (y_ball + y_movement < 0) || (y_ball + y_movement >= SCREEN_HEIGHT) ) 
+        y_movement *= -1;
 
     // No collision occurs
     else {
@@ -214,19 +230,19 @@ void update() {
     if (x_ball < 0) {
         score2++;
         render_score2 = true;
-        cout << "Left paddle lost" << endl;
         x_ball = SCREEN_WIDTH / 2;
         y_ball = SCREEN_HEIGHT / 2;
         x_movement = 0;
+        y_movement = 0;
     }
 
     else if (x_ball > SCREEN_WIDTH) {
         score1++;
         render_score1 = true;
-        cout << "Right paddle lost" << endl;
         x_ball = SCREEN_WIDTH / 2;
         y_ball = SCREEN_HEIGHT / 2;
         x_movement = 0;
+        y_movement = 0;
     }
 
 }
@@ -284,6 +300,12 @@ void render() {
 
 }
 
+void cleanUp() {
+    SDL_DestroyTexture(font_image_score1);
+    SDL_DestroyTexture(font_image_score2);
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+}
 
 void gameLoop() {
 
@@ -293,10 +315,7 @@ void gameLoop() {
         render();
     }
 
-    SDL_DestroyTexture(font_image_score1);
-    SDL_DestroyTexture(font_image_score2);
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
+    cleanUp();
 }
 
 void initialize() {
