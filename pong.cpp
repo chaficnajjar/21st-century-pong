@@ -217,7 +217,7 @@ void update() {
     }
 
     // Upper and bottom walls collision
-    else if ( (y_ball + y_movement < 0) || (y_ball + y_movement >= SCREEN_HEIGHT) ) 
+    else if ( (y_ball + y_movement < 0) || (y_ball + BALL_HEIGHT + y_movement >= SCREEN_HEIGHT) ) 
         y_movement *= -1;
 
     // No collision occurs
@@ -329,9 +329,7 @@ void initialize() {
             SCREEN_HEIGHT,
             SDL_WINDOW_SHOWN);
             
-    renderer = SDL_CreateRenderer( window,
-            -1, 
-            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
     // Initialize font
