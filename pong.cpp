@@ -192,6 +192,7 @@ void update() {
 
     if (left_paddle_y < 0)
         left_paddle_y = 0;
+
     else if (left_paddle_y + 60 > SCREEN_HEIGHT)
         left_paddle_y = SCREEN_HEIGHT - 60;
 
@@ -281,14 +282,15 @@ void render() {
         font_image_score1 = renderText(to_string(score1), "FFFFORWA.TTF", font_color, 24, renderer);
         render_score1 = false;
     }
-    renderTexture(font_image_score1, renderer, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8);
+    renderTexture(font_image_score1, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 8);
 
+    int score_font_size = 24;
     if (render_score2) {
-        font_image_score2 = renderText(to_string(score2), "FFFFORWA.TTF", font_color, 24, renderer);
+        font_image_score2 = renderText(to_string(score2), "FFFFORWA.TTF", font_color, score_font_size, renderer);
         render_score2 = false;
 
     }
-    renderTexture(font_image_score2, renderer, SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 8);
+    renderTexture(font_image_score2, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 8);
 
     // Render ball
     SDL_Rect ball = { x_ball, y_ball, BALL_WIDTH, BALL_HEIGHT };
