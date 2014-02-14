@@ -45,7 +45,6 @@ int right_paddle_y = SCREEN_HEIGHT / 2 - 30;
 int paddle1_offset = 0;
 int paddle2_offset = 0;
 
-
 // Ball movement indicator
 bool launch_ball = false;
 
@@ -58,8 +57,12 @@ int x_ball = SCREEN_WIDTH / 2;
 int y_ball = SCREEN_HEIGHT / 2;
 
 // Ball movement
-int x_movement = 0;
-int y_movement = 0;
+float dx = 0;
+float dy = 0;
+
+const int MAX_SPEED = 10;
+float speed = 5;
+float angle = 0;
 
 bool bounce = false;
 
@@ -107,6 +110,7 @@ void input() {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
 
+        // Mouse moves
         if (event.type == SDL_MOUSEMOTION) {
             SDL_GetMouseState(&x, &y);
         }
@@ -132,8 +136,10 @@ void input() {
                     break;
 
                 case SDLK_SPACE:
-                    x_movement = 5;
-                    y_movement = rand()%6-3;
+                    angle = (float)(rand() % 3600)/10.0f;
+                    dx = speed*cos(angle*M_PI/180.0f);
+                    dy = speed*sin(angle*M_PI/180.0f);
+                    launch_ball = true;
                     break;
 
                 case SDLK_w:
@@ -157,7 +163,7 @@ void input() {
 }
 
 bool checkRightCollision() {
-    if (!(x_ball + BALL_WIDTH + x_movement >= right_paddle_x))
+    if (!(x_ball + BALL_WIDTH + dx >= right_paddle_x))
         return false; 
     if (x_ball > right_paddle_x + PADDLE_WIDTH)
         return false;
@@ -167,7 +173,7 @@ bool checkRightCollision() {
 }
 
 bool checkLeftCollision() {
-    if (!(x_ball + x_movement <= left_paddle_x + PADDLE_WIDTH))
+    if (!(x_ball + dx <= left_paddle_x + PADDLE_WIDTH))
         return false;
     if (x_ball < left_paddle_x)
         return false;
@@ -182,6 +188,10 @@ void update() {
     if (mouse == true) {
         right_paddle_y = y;
     }
+
+    // return if ball hasn't been launched
+    if (!launch_ball)
+        return;
 
     // AI: left paddle follows the ball
     left_paddle_y = y_ball - PADDLE_HEIGHT / 2;
@@ -200,8 +210,14 @@ void update() {
     // Smooth left paddle-ball collision
     if (checkLeftCollision()) {
             if (bounce) {
-                x_movement *= -1;
+                int left_relative_y = (y_ball - left_paddle_y + BALL_HEIGHT) / 8.75;
+                cout << "left relative: " << left_relative_y << endl;
+                angle = -90 + 22.5*left_relative_y;
+                cout << angle << endl;
+                dx = speed*cos(angle*M_PI/180.0f);
+                dy = speed*sin(angle*M_PI/180.0f);
                 bounce = false;
+
             }
             x_ball = left_paddle_x + PADDLE_WIDTH;      // ball hits paddle on surface
             bounce = true;
@@ -210,7 +226,11 @@ void update() {
     // Smooth right paddle-ball collision
     else if (checkRightCollision()) {
             if (bounce) {
-                x_movement *= -1;
+                int right_relative_y = (y_ball - right_paddle_y + BALL_HEIGHT) / 8.75;
+                angle = 270 - 22.5*right_relative_y;
+                cout << angle << endl;
+                dx = speed*cos(angle*M_PI/180.0f);      // convert angle to radian first
+                dy = speed*sin(angle*M_PI/180.0f);
                 bounce = false;
             }
             x_ball = right_paddle_x - BALL_WIDTH;       // ball hits paddle on surface
@@ -218,13 +238,13 @@ void update() {
     }
 
     // Upper and bottom walls collision
-    else if ( (y_ball + y_movement < 0) || (y_ball + BALL_HEIGHT + y_movement >= SCREEN_HEIGHT) ) 
-        y_movement *= -1;
+    else if ( (y_ball + dy < 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) ) 
+        dy *= -1;
 
     // No collision occurs
     else {
-        x_ball += x_movement;
-        y_ball += y_movement;
+        x_ball += dx;
+        y_ball += dy;
     }
 
     // If ball goes out...
@@ -233,8 +253,8 @@ void update() {
         render_score2 = true;
         x_ball = SCREEN_WIDTH / 2;
         y_ball = SCREEN_HEIGHT / 2;
-        x_movement = 0;
-        y_movement = 0;
+        dx = 0;
+        dy = 0;
     }
 
     else if (x_ball > SCREEN_WIDTH) {
@@ -242,8 +262,8 @@ void update() {
         render_score1 = true;
         x_ball = SCREEN_WIDTH / 2;
         y_ball = SCREEN_HEIGHT / 2;
-        x_movement = 0;
-        y_movement = 0;
+        dx = 0;
+        dy = 0;
     }
 
 }
