@@ -136,10 +136,12 @@ void input() {
                     break;
 
                 case SDLK_SPACE:
-                    angle = (float)(rand() % 3600)/10.0f;
-                    dx = speed*cos(angle*M_PI/180.0f);
-                    dy = speed*sin(angle*M_PI/180.0f);
-                    launch_ball = true;
+                    if (!launch_ball) {
+                        angle = (float)(rand() % 3600)/10.0f;
+                        dx = speed*cos(angle*M_PI/180.0f);
+                        dy = speed*sin(angle*M_PI/180.0f);
+                        launch_ball = true;
+                    }
                     break;
 
                 case SDLK_w:
@@ -255,6 +257,7 @@ void update() {
         y_ball = SCREEN_HEIGHT / 2;
         dx = 0;
         dy = 0;
+        launch_ball = false;
     }
 
     else if (x_ball > SCREEN_WIDTH) {
@@ -264,6 +267,7 @@ void update() {
         y_ball = SCREEN_HEIGHT / 2;
         dx = 0;
         dy = 0;
+        launch_ball = false;
     }
 
 }
