@@ -137,8 +137,10 @@ void input() {
 
                 case SDLK_SPACE:
                     if (!launch_ball) {
-                        angle = (float)(rand() % 3600)/10.0f;
-                        dx = speed*cos(angle*M_PI/180.0f);
+                        //angle = (float)(rand() % 3600)/10.0f;
+                        int direction = 1+(-2)*(rand()%2);      // either 1 or -1
+                        angle = rand()%120-60;                  // between -60 and 59
+                        dx = direction*speed*cos(angle*M_PI/180.0f);
                         dy = speed*sin(angle*M_PI/180.0f);
                         launch_ball = true;
                     }
@@ -243,7 +245,7 @@ void update() {
     }
 
     // Upper and bottom walls collision
-    else if ( (y_ball + dy <= 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) ) {
+    else if ( (y_ball + dy < 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) ) {
         dy *= -1;
     }
 
@@ -258,9 +260,7 @@ void update() {
         if (x_ball > SCREEN_WIDTH) {
             score1++;
             render_score1 = true;
-        }
-
-        else {
+        } else {
             score2++;
             render_score2 = true;
         }
