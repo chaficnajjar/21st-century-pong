@@ -253,21 +253,16 @@ void update() {
     }
 
     // If ball goes out...
-    if (x_ball < 0) {
-        score2++;
-        render_score2 = true;
-        x_ball = SCREEN_WIDTH / 2;
-        y_ball = SCREEN_HEIGHT / 2;
-        dx = 0;
-        dy = 0;
-        launch_ball = false;
-        speed = 8;
-        hit_count = 0;
-    }
+    if (x_ball > SCREEN_WIDTH || x_ball < 0) {
+        if (x_ball > SCREEN_WIDTH) {
+            score1++;
+            render_score1 = true;
+        }
 
-    else if (x_ball > SCREEN_WIDTH) {
-        score1++;
-        render_score1 = true;
+        else {
+            score2++;
+            render_score2 = true;
+        }
         x_ball = SCREEN_WIDTH / 2;
         y_ball = SCREEN_HEIGHT / 2;
         dx = 0;
