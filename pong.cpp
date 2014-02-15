@@ -20,6 +20,7 @@ SDL_Texture*    font_image_score1;
 SDL_Texture*    font_image_score2;
 SDL_Texture*    font_image_winner;
 SDL_Texture*    font_image_restart;
+SDL_Texture*    font_image_launch;
 SDL_Color font_color = {255, 255, 255};
 
 // Screen resolution
@@ -350,6 +351,11 @@ void render() {
             render_score1 = true;
             render_score2 = true;
         }
+    }
+
+    if (!launch_ball) {
+        font_image_launch = renderText("Press SPACE to start", "FFFFORWA.TTF", font_color, 12, renderer);
+        renderTexture(font_image_launch, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
     }
 
     // Swap buffers
