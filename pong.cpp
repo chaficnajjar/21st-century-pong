@@ -193,16 +193,6 @@ void update() {
         right_paddle_y = y;
     }
 
-    // return if ball hasn't been launched
-    if (!launch_ball)
-        return;
-
-
-    if (hit_count == 3) {
-        speed++;
-        hit_count = 0;
-    }
-
     // AI: left paddle follows the ball
     left_paddle_y = y_ball - (PADDLE_HEIGHT - BALL_HEIGHT) / 2;
 
@@ -215,6 +205,17 @@ void update() {
 
     else if (left_paddle_y + 60 > SCREEN_HEIGHT)
         left_paddle_y = SCREEN_HEIGHT - 60;
+
+
+    // return if ball hasn't been launched
+    if (!launch_ball)
+        return;
+
+
+    if (hit_count == 3) {
+        speed++;
+        hit_count = 0;
+    }
 
     // Smooth left paddle-ball collision
     if (checkLeftCollision()) {
