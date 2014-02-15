@@ -18,6 +18,8 @@ SDL_Window*     window;
 SDL_Renderer*   renderer;
 SDL_Texture*    font_image_score1;
 SDL_Texture*    font_image_score2;
+SDL_Texture*    font_image_winner;
+SDL_Texture*    font_image_restart;
 SDL_Color font_color = {255, 255, 255};
 
 // Screen resolution
@@ -324,6 +326,31 @@ void render() {
     SDL_Rect ball = { x_ball, y_ball, BALL_WIDTH, BALL_HEIGHT };
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &ball);
+
+    // Render text indicating the winner
+    if (score1 == 5) {
+        font_image_winner = renderText("Player 1 won!", "FFFFORWA.TTF", font_color, 24, renderer);
+        renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 4);   // align with score
+        font_image_restart = renderText("Press SPACE to restart", "FFFFORWA.TTF", font_color, 12, renderer);
+        renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 3);
+        if (launch_ball) {
+            score1 = 0;
+            score2 = 0;
+            render_score1 = true;
+            render_score2 = true;
+        }
+    } else if (score2 == 5) {
+        font_image_winner = renderText("Player 2 won!", "FFFFORWA.TTF", font_color, 24, renderer);
+        renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 4);   // align with score
+        font_image_restart = renderText("Press SPACE to restart", "FFFFORWA.TTF", font_color, 12, renderer);
+        renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 3);
+        if (launch_ball) {
+            score1 = 0;
+            score2 = 0;
+            render_score1 = true;
+            render_score2 = true;
+        }
+    }
 
     // Swap buffers
     SDL_RenderPresent(renderer);
