@@ -57,12 +57,12 @@ int x_ball = SCREEN_WIDTH / 2;
 int y_ball = SCREEN_HEIGHT / 2;
 
 // Ball movement
-float dx = 0;
-float dy = 0;
+int dx = 0;
+int dy = 0;
 
-float speed = 8;
+int speed = 8;
 int hit_count = 0;
-float angle = 0;
+float angle = 0.0f;
 
 bool bounce = false;
 
@@ -202,7 +202,7 @@ void update() {
     }
 
     // AI: left paddle follows the ball
-    left_paddle_y = y_ball - PADDLE_HEIGHT / 2;
+    left_paddle_y = y_ball - (PADDLE_HEIGHT - BALL_HEIGHT) / 2;
 
     if (right_paddle_y + 60 > SCREEN_HEIGHT)
         right_paddle_y = SCREEN_HEIGHT - 60;
@@ -218,7 +218,7 @@ void update() {
     if (checkLeftCollision()) {
             if (bounce) {
                 int left_relative_y = (y_ball - left_paddle_y + BALL_HEIGHT);
-                angle = (2.14 * left_relative_y - 75);
+                angle = (2.14f * left_relative_y - 75.0f);
                 dx = speed*cos(angle*M_PI/180.0f);      // convert to radian first 
                 dy = speed*sin(angle*M_PI/180.0f);
                 bounce = false;
@@ -243,8 +243,9 @@ void update() {
     }
 
     // Upper and bottom walls collision
-    else if ( (y_ball + dy < 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) ) 
+    else if ( (y_ball + dy <= 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) ) {
         dy *= -1;
+    }
 
     // No collision occurs
     else {
