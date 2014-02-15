@@ -60,8 +60,8 @@ int y_ball = SCREEN_HEIGHT / 2;
 float dx = 0;
 float dy = 0;
 
-const int MAX_SPEED = 10;
-float speed = 5;
+float speed = 8;
+int hit_count = 0;
 float angle = 0;
 
 bool bounce = false;
@@ -195,6 +195,12 @@ void update() {
     if (!launch_ball)
         return;
 
+
+    if (hit_count == 3) {
+        speed++;
+        hit_count = 0;
+    }
+
     // AI: left paddle follows the ball
     left_paddle_y = y_ball - PADDLE_HEIGHT / 2;
 
@@ -208,30 +214,27 @@ void update() {
     else if (left_paddle_y + 60 > SCREEN_HEIGHT)
         left_paddle_y = SCREEN_HEIGHT - 60;
 
-
     // Smooth left paddle-ball collision
     if (checkLeftCollision()) {
             if (bounce) {
-                int left_relative_y = (y_ball - left_paddle_y + BALL_HEIGHT) / 8.75;
-                cout << "left relative: " << left_relative_y << endl;
-                angle = -90 + 22.5*left_relative_y;
-                cout << angle << endl;
-                dx = speed*cos(angle*M_PI/180.0f);
+                int left_relative_y = (y_ball - left_paddle_y + BALL_HEIGHT);
+                angle = (2.14 * left_relative_y - 75);
+                dx = speed*cos(angle*M_PI/180.0f);      // convert to radian first 
                 dy = speed*sin(angle*M_PI/180.0f);
                 bounce = false;
 
             }
-            x_ball = left_paddle_x + PADDLE_WIDTH;      // ball hits paddle on surface
+            x_ball = left_paddle_x + PADDLE_WIDTH;      // move ball to paddle surface
+            hit_count++;
             bounce = true;
     }
 
     // Smooth right paddle-ball collision
     else if (checkRightCollision()) {
             if (bounce) {
-                int right_relative_y = (y_ball - right_paddle_y + BALL_HEIGHT) / 8.75;
-                angle = 270 - 22.5*right_relative_y;
-                cout << angle << endl;
-                dx = speed*cos(angle*M_PI/180.0f);      // convert angle to radian first
+                int right_relative_y = (y_ball - right_paddle_y + BALL_HEIGHT);
+                angle = (2.14 * right_relative_y - 75);
+                dx = -speed*cos(angle*M_PI/180.0f); 
                 dy = speed*sin(angle*M_PI/180.0f);
                 bounce = false;
             }
@@ -258,6 +261,8 @@ void update() {
         dx = 0;
         dy = 0;
         launch_ball = false;
+        speed = 8;
+        hit_count = 0;
     }
 
     else if (x_ball > SCREEN_WIDTH) {
@@ -268,6 +273,8 @@ void update() {
         dx = 0;
         dy = 0;
         launch_ball = false;
+        speed = 8;
+        hit_count = 0;
     }
 
 }
