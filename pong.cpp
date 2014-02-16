@@ -22,7 +22,10 @@ SDL_Texture*    font_image_score2;
 SDL_Texture*    font_image_winner;
 SDL_Texture*    font_image_restart;
 SDL_Texture*    font_image_launch;
-SDL_Color font_color = {255, 255, 255};
+// SDL_Color font_color = {255, 255, 255};
+// SDL_Color font_color = {170, 71, 63};
+SDL_Color font_color = {0, 0, 0};
+
 
 // Screen resolution
 int SCREEN_WIDTH = 640;
@@ -79,6 +82,11 @@ bool render_score2 = true;
 
 // Prediction
 int final_predicted_y; 
+
+
+// Design
+string fonts[] = {"Lato-Reg.TTF","FFFFORWA.TTF"};
+
 
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
     SDL_RenderCopy(ren, tex, clip, &dst);
@@ -340,19 +348,24 @@ void update() {
 void render() {
 
     // Clear screen
-    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+    SDL_SetRenderDrawColor( renderer, 67, 68, 69, 255 );
     SDL_RenderClear(renderer);
+
+
+    SDL_Rect rightBackground = { SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT };
+    SDL_SetRenderDrawColor( renderer, 187, 191, 194, 255 );
+    SDL_RenderFillRect( renderer, &rightBackground );
 
     // Render white filled paddle
     SDL_Rect paddle1 = { left_paddle_x, left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT };
-    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+    SDL_SetRenderDrawColor( renderer, 212, 120, 102, 255 );
     SDL_RenderFillRect( renderer, &paddle1 );
 
     // Render white filled paddle
     SDL_Rect paddle2 = { right_paddle_x, right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT };
-    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderFillRect( renderer, &paddle2 );
 
+    /*
     // Draw white vertical line
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     int j = 30;
@@ -365,32 +378,34 @@ void render() {
         j += 17;
         k += 17;
     }
+    */
 
     // Render scores
     if (render_score1) {
-        font_image_score1 = renderText(to_string(score1), "FFFFORWA.TTF", font_color, 24, renderer);
+        font_image_score1 = renderText(to_string(score1), "Lato-Reg.TTF", {187, 191, 194}, 24, renderer);
         render_score1 = false;
     }
-    renderTexture(font_image_score1, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 8);
+
+    renderTexture(font_image_score1, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
 
     int score_font_size = 24;
     if (render_score2) {
-        font_image_score2 = renderText(to_string(score2), "FFFFORWA.TTF", font_color, score_font_size, renderer);
+        font_image_score2 = renderText(to_string(score2), "Lato-Reg.TTF", {67, 68, 69}, score_font_size, renderer);
         render_score2 = false;
 
     }
-    renderTexture(font_image_score2, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 8);
+    renderTexture(font_image_score2, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT/ 12);
 
     // Render ball
-    SDL_Rect ball = { x_ball, y_ball, BALL_WIDTH, BALL_HEIGHT };
+    SDL_Rect ball = { x_ball - BALL_WIDTH / 2, y_ball, BALL_WIDTH, BALL_HEIGHT };
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &ball);
 
     // Render text indicating the winner
     if (score1 == 5) {
-        font_image_winner = renderText("Player 1 won!", "FFFFORWA.TTF", font_color, 24, renderer);
+        font_image_winner = renderText("Player 1 won!", fonts[0], font_color, 24, renderer);
         renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 4);   // align with score
-        font_image_restart = renderText("Press SPACE to restart", "FFFFORWA.TTF", font_color, 12, renderer);
+        font_image_restart = renderText("Press SPACE to restart", fonts[1], font_color, 12, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 3);
         if (launch_ball) {
             score1 = 0;
@@ -399,9 +414,9 @@ void render() {
             render_score2 = true;
         }
     } else if (score2 == 5) {
-        font_image_winner = renderText("Player 2 won!", "FFFFORWA.TTF", font_color, 24, renderer);
-        renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 4);   // align with score
-        font_image_restart = renderText("Press SPACE to restart", "FFFFORWA.TTF", font_color, 12, renderer);
+        font_image_winner = renderText("Player 2 won!", fonts[0], font_color, 24, renderer);
+        renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 1);   // align with score
+        font_image_restart = renderText("Press SPACE to restart", fonts[0], font_color, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 3);
         if (launch_ball) {
             score1 = 0;
@@ -412,8 +427,11 @@ void render() {
     }
 
     if (!launch_ball) {
-        font_image_launch = renderText("Press SPACE to start", "FFFFORWA.TTF", font_color, 12, renderer);
+        font_image_launch = renderText("Press SPA", fonts[0], {187, 191, 194}, 18, renderer);
         renderTexture(font_image_launch, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
+
+        font_image_launch = renderText("CE to start", fonts[0], {67, 68, 69}, 18, renderer);
+        renderTexture(font_image_launch, renderer, SCREEN_WIDTH / 2 + 1, SCREEN_HEIGHT - 25);
     }
 
     // Swap buffers
