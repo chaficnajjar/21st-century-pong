@@ -21,7 +21,8 @@ SDL_Texture*    font_image_score1;
 SDL_Texture*    font_image_score2;
 SDL_Texture*    font_image_winner;
 SDL_Texture*    font_image_restart;
-SDL_Texture*    font_image_launch;
+SDL_Texture*    font_image_launch1;
+SDL_Texture*    font_image_launch2;
 // SDL_Color font_color = {255, 255, 255};
 // SDL_Color font_color = {170, 71, 63};
 SDL_Color font_color = {0, 0, 0};
@@ -398,7 +399,7 @@ void render() {
 
     // Render ball
     SDL_Rect ball = { x_ball - BALL_WIDTH / 2, y_ball, BALL_WIDTH, BALL_HEIGHT };
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 212, 120, 102, 255);
     SDL_RenderFillRect(renderer, &ball);
 
     // Render text indicating the winner
@@ -427,11 +428,8 @@ void render() {
     }
 
     if (!launch_ball) {
-        font_image_launch = renderText("Press SPA", fonts[0], {187, 191, 194}, 18, renderer);
-        renderTexture(font_image_launch, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
-
-        font_image_launch = renderText("CE to start", fonts[0], {67, 68, 69}, 18, renderer);
-        renderTexture(font_image_launch, renderer, SCREEN_WIDTH / 2 + 1, SCREEN_HEIGHT - 25);
+        renderTexture(font_image_launch1, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
+        renderTexture(font_image_launch2, renderer, SCREEN_WIDTH / 2 + 1, SCREEN_HEIGHT - 25);
     }
 
     // Swap buffers
@@ -473,6 +471,9 @@ void initialize() {
 
     // Initialize font
     TTF_Init();
+
+    font_image_launch1 = renderText("Press SPA", fonts[0], {187, 191, 194}, 18, renderer);
+    font_image_launch2 = renderText("CE to start", fonts[0], {67, 68, 69}, 18, renderer);
 
     // Don't show cursor
     SDL_ShowCursor(0);
