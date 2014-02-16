@@ -404,9 +404,9 @@ void render() {
 
     // Render text indicating the winner
     if (score1 == 5) {
-        font_image_winner = renderText("Player 1 won!", fonts[0], font_color, 24, renderer);
+        font_image_winner = renderText("Player 1 won!", fonts[0], {187, 191, 194}, 24, renderer);
         renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 4);   // align with score
-        font_image_restart = renderText("Press SPACE to restart", fonts[1], font_color, 12, renderer);
+        font_image_restart = renderText("Press SPACE to restart", fonts[0], {187, 191, 194}, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 3);
         if (launch_ball) {
             score1 = 0;
@@ -415,9 +415,9 @@ void render() {
             render_score2 = true;
         }
     } else if (score2 == 5) {
-        font_image_winner = renderText("Player 2 won!", fonts[0], font_color, 24, renderer);
-        renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 1);   // align with score
-        font_image_restart = renderText("Press SPACE to restart", fonts[0], font_color, 18, renderer);
+        font_image_winner = renderText("Player 2 won!", fonts[0], {67, 68, 69}, 24, renderer);
+        renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 4);   // align with score
+        font_image_restart = renderText("Press SPACE to restart", fonts[0], {67, 68, 69}, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 3);
         if (launch_ball) {
             score1 = 0;
@@ -427,7 +427,7 @@ void render() {
         }
     }
 
-    if (!launch_ball) {
+    else if (!launch_ball) {
         renderTexture(font_image_launch1, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
         renderTexture(font_image_launch2, renderer, SCREEN_WIDTH / 2 + 1, SCREEN_HEIGHT - 25);
     }
