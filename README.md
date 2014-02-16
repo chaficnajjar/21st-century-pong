@@ -38,4 +38,6 @@ Credits
 =======
 
 Chafic Najjar - <chafic.najjar@gmail.com>
+
 [Piotr Yordanov](https://github.com/tUrG0n) for the Mac script and game theme colors
+
