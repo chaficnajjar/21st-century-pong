@@ -6,6 +6,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <cmath>
 
 #include <ctime>
 
@@ -76,6 +77,9 @@ int score2 = 0;
 bool render_score1 = true;
 bool render_score2 = true;
 
+// Prediction
+int final_predicted_y; 
+
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
     SDL_RenderCopy(ren, tex, clip, &dst);
 }
@@ -105,6 +109,32 @@ SDL_Texture* renderText(const string &message, const string &fontFile, SDL_Color
     SDL_FreeSurface(surf);
     TTF_CloseFont(font);
     return texture;
+}
+
+// Imprecise prediction
+int predict() {
+
+    // Find slope
+    float slope = (float)(y_ball - y_ball+dy)/(x_ball - x_ball+dx);
+
+    // Distance between paddles
+    int paddle_distance = right_paddle_x - (left_paddle_x+PADDLE_WIDTH); 
+
+    // Prediction without taking into consideration upper and bottom collisions
+    int predicted_y = abs(slope * -(paddle_distance) + y_ball);
+
+    bool subtraction = false;
+
+    // Calculate number of reflexions
+    int number_of_reflexions = predicted_y / SCREEN_HEIGHT;
+
+    if (number_of_reflexions % 2 == 0)
+        predicted_y = predicted_y % SCREEN_HEIGHT;
+    else
+        predicted_y = SCREEN_HEIGHT - (predicted_y % SCREEN_HEIGHT);
+
+    return predicted_y;
+
 }
 
 void input() {
@@ -145,6 +175,16 @@ void input() {
                         angle = rand()%120-60;                  // between -60 and 59
                         dx = direction*speed*cos(angle*M_PI/180.0f);
                         dy = speed*sin(angle*M_PI/180.0f);
+
+                        // Find slope
+                        float slope = (float)(y_ball - y_ball+dy)/(x_ball - x_ball+dx);
+
+                        // Distance between left paddle and center
+                        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle_x+PADDLE_WIDTH); 
+
+                        // Prediction without taking into consideration upper and bottom collisions
+                        final_predicted_y = abs(slope * -(paddle_distance) + y_ball);
+
                         launch_ball = true;
                     }
                     break;
@@ -196,8 +236,22 @@ void update() {
         right_paddle_y = y;
     }
 
-    // AI: left paddle follows the ball
-    left_paddle_y = y_ball - (PADDLE_HEIGHT - BALL_HEIGHT) / 2;
+    // Follow the ball 
+    if (x_ball < SCREEN_WIDTH*3/5 && dx < 0) {
+        if (left_paddle_y + (PADDLE_HEIGHT - BALL_HEIGHT)/2 < final_predicted_y-2)
+            left_paddle_y += speed/8 * 4;
+        else if (left_paddle_y + (PADDLE_HEIGHT - BALL_HEIGHT)/2 > final_predicted_y+2)
+            left_paddle_y -= speed/8 * 4;
+    }
+
+    // Return to the center
+    else if (dx >= 0){
+        if (left_paddle_y + PADDLE_HEIGHT / 2 < SCREEN_HEIGHT/2)
+            left_paddle_y += 2;
+        else if (left_paddle_y + PADDLE_HEIGHT / 2 > SCREEN_HEIGHT/2) 
+            left_paddle_y -= 2;
+    }
+
 
     if (right_paddle_y + 60 > SCREEN_HEIGHT)
         right_paddle_y = SCREEN_HEIGHT - 60;
@@ -246,6 +300,10 @@ void update() {
             }
             x_ball = right_paddle_x - BALL_WIDTH;       // ball hits paddle on surface
             bounce = true;
+
+            // predict ball position with the left paddle
+            final_predicted_y = predict();
+
     }
 
     // Upper and bottom walls collision
