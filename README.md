@@ -22,8 +22,9 @@ Not yet tested.
 To-do
 =====
 
-+ Comment code
-+ Enhence AI
++ ~~Comment code~~
++ ~~Enhence AI~~
++ Finish the Windows version
 + Add collision sounds
 + Add music
 + Add game menu
@@ -39,5 +40,6 @@ Credits
 
 Chafic Najjar - <chafic.najjar@gmail.com>
 
-[Piotr Yordanov](https://github.com/tUrG0n) for the Mac script and game theme colors
+Thank you [Piotr Yordanov](https://github.com/tUrG0n) for the Mac script and game theme colors.
 
+Thank you [Roy Naufal](https://github.com/roynaufal) for contributing to fixing the ball trajectory.
