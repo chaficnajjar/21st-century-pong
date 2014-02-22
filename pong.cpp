@@ -466,7 +466,6 @@ void initialize() {
             SDL_WINDOW_SHOWN);
             
     renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
     // Initialize font
     TTF_Init();
