@@ -1,7 +1,9 @@
 The Pong game
 =============
 
-Pong clone written in C++ and using SDL 2.0
+Pong clone written in C++ with SDL 2.0.
+
+![Screenshot 1](https://drive.google.com/file/d/0B6yXAGDN3is_aDB1d2ZvU0lnaGc/edit?usp=sharing)  ![Screenshot 2](https://drive.google.com/file/d/0B6yXAGDN3is_NGJ3WWNxNzNlaGs/edit?usp=sharing)
 
 Install
 =======
