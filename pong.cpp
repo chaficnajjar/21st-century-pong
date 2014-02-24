@@ -7,6 +7,7 @@
 
 #include <SDL2/SDL.h>           // SDL library
 #include <SDL2/SDL_ttf.h>       // SDL font library
+#include <SDL2/SDL_mixer.h>     // Sounds
 #include <cmath>                // abs()
 
 #include <ctime>                // rand()
@@ -25,6 +26,10 @@ SDL_Texture*    font_image_winner;      // holds text indicating winner
 SDL_Texture*    font_image_restart;     // holds text suggesting to restart the game
 SDL_Texture*    font_image_launch1;     // holds first part of text suggesting to launch the ball
 SDL_Texture*    font_image_launch2;     // holds second part of text suggesting to launch the ball
+
+Mix_Chunk *paddle_sound;                // holds sound produced after ball collides with paddle
+Mix_Chunk *wall_sound;                  // holds sound produced after ball collides with wall
+Mix_Chunk *score_sound;                 // holds sound produced when updating score
 
 SDL_Color dark_font = {67, 68, 69};     // dark_grey
 SDL_Color light_font = {187, 191, 194}; // light_grey
@@ -297,6 +302,7 @@ void update() {
             }
             x_ball = left_paddle_x + PADDLE_WIDTH;      // deposit ball on left paddle surface (smooth collision)
             bounce = true;                              // bounce ball on next frame
+            Mix_PlayChannel(-1, paddle_sound, 0);       // Play collision sound
     }
 
     // Smooth collision between ball and right paddle
@@ -315,14 +321,17 @@ void update() {
             x_ball = right_paddle_x - BALL_WIDTH;       // deposit ball on surface right paddle surface (smooth collision)
             hit_count++;                                // increment hit counter
             bounce = true;                              // bounce ball on next frame
+            Mix_PlayChannel(-1, paddle_sound, 0);       // play collision sound
 
             final_predicted_y = predict();              // predict ball position for AI to intercept
 
     }
 
     // Upper and bottom walls collision
-    else if ( (y_ball + dy < 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) )
+    else if ( (y_ball + dy < 0) || (y_ball + BALL_HEIGHT + dy >= SCREEN_HEIGHT) ) {
         dy *= -1;
+        Mix_PlayChannel(-1, wall_sound, 0);             // play collision sound
+    }
 
     // No collision occurs, update ball coordinates
     else {
@@ -341,6 +350,9 @@ void update() {
             score2++;
             right_score_changed = true;
         }
+
+        // Play score sound
+        Mix_PlayChannel(-1, score_sound, 0); 
 
         // Reset ball position to before launch
         x_ball = SCREEN_WIDTH / 2;
@@ -439,8 +451,15 @@ void render() {
 void cleanUp() {
     SDL_DestroyTexture(font_image_score1);
     SDL_DestroyTexture(font_image_score2);
-    SDL_DestroyWindow(window);
+
+    // Free the sound effects
+    Mix_FreeChunk(paddle_sound);
+
+    // Quit SDL_mixer
+    Mix_CloseAudio();
+
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
 }
 
 void gameLoop() {
@@ -473,6 +492,14 @@ void initialize() {
     // Holds text "Press SPACE to start"
     font_image_launch1 = renderText("Press SPA", fonts[0], light_font, 18, renderer);
     font_image_launch2 = renderText("CE to start", fonts[0], dark_font, 18, renderer);
+
+    // Initialize SDL_Mixer
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
+
+    // Load sounds
+    paddle_sound = Mix_LoadWAV("./sounds/paddle_hit.wav");
+    wall_sound = Mix_LoadWAV("./sounds/wall_hit.wav");
+    score_sound = Mix_LoadWAV("./sounds/score_update.wav");
 
     // Don't show cursor
     SDL_ShowCursor(0);

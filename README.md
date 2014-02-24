@@ -27,8 +27,7 @@ To-do
 + ~~Comment code~~
 + ~~Enhence AI~~
 + Finish the Windows version
-+ Add collision sounds
-+ Add music
++ ~~Add collision sounds~~
 + Add game menu
 + Add themes
 + Add keyboard support
