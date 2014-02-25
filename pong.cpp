@@ -240,9 +240,9 @@ void update() {
     if (x_ball < SCREEN_WIDTH*3/5 && ball_dx < 0) { 
         // Follow the ball
         if (left_paddle_y + (PADDLE_HEIGHT - BALL_HEIGHT)/2 < final_predicted_y-2)
-            left_paddle_y += speed/8 * 4;
+            left_paddle_y += speed/8 * 5;
         else if (left_paddle_y + (PADDLE_HEIGHT - BALL_HEIGHT)/2 > final_predicted_y+2)
-            left_paddle_y -= speed/8 * 4;
+            left_paddle_y -= speed/8 * 5;
     }
 
     // Ball is anywhere on the screen but going right
