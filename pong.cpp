@@ -37,8 +37,8 @@ SDL_Color light_font = {187, 191, 194}; // light grey
 bool done = false;                      // true when player exits game
 
 // Screen resolution
-int SCREEN_WIDTH = 640;
-int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
 // Controllers
 enum Controllers {mouse, keyboard, joystick};
