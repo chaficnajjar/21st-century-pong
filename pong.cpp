@@ -12,7 +12,6 @@
 #include <ctime>                        // rand()
 
 #include <iostream>
-using namespace std;
 
 SDL_Window*     window;                 // holds window properties
 SDL_Renderer*   renderer;               // holds rendering surface properties
@@ -94,7 +93,7 @@ int final_predicted_y;              // predicted ball position on y-axis after r
 int value = 0;
 
 // Font names
-string fonts[] = {"Lato-Reg.TTF", "FFFFORWA.TTF"};
+std::string fonts[] = {"Lato-Reg.TTF", "FFFFORWA.TTF"};
 
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
     SDL_RenderCopy(ren, tex, clip, &dst);
@@ -115,7 +114,7 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *
     renderTexture(tex, ren, dst, clip);
 }
 
-SDL_Texture* renderText(const string &message, const string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
+SDL_Texture* renderText(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
     TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
 
     SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
@@ -423,14 +422,14 @@ void render() {
 
     // Render scores
     if (left_score_changed) {
-        font_image_score1 = renderText(to_string(score1), "Lato-Reg.TTF", light_font, 24, renderer);
+        font_image_score1 = renderText(std::to_string(score1), "Lato-Reg.TTF", light_font, 24, renderer);
         left_score_changed = false;
     }
     renderTexture(font_image_score1, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
 
     int score_font_size = 24;
     if (right_score_changed) {
-        font_image_score2 = renderText(to_string(score2), "Lato-Reg.TTF", dark_font, score_font_size, renderer);
+        font_image_score2 = renderText(std::to_string(score2), "Lato-Reg.TTF", dark_font, score_font_size, renderer);
         right_score_changed = false;
 
     }
@@ -549,7 +548,7 @@ void initialize() {
     gamepad = SDL_JoystickOpen(0);
 
     for(int i = 0; i < SDL_NumJoysticks(); i++) 
-        cout << "\t" << SDL_JoystickName(gamepad) << endl;
+        std::cout << "\t" << SDL_JoystickName(gamepad) << std::endl;
 }
 
 int main(int argc, char *argv[]) {
