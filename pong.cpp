@@ -10,6 +10,7 @@
 #include <SDL2/SDL_mixer.h>             // SDL sound library
 #include <cmath>                        // abs()
 #include <ctime>                        // rand()
+#include <cstring>
 
 #include <iostream>
 using namespace std;
@@ -40,9 +41,8 @@ int SCREEN_WIDTH = 640;
 int SCREEN_HEIGHT = 480;
 
 // Controllers
-bool mouse = false;
-bool keyboard = false;
-bool joystick = true;
+enum Controllers {mouse, keyboard, joystick};
+Controllers controller;
 
 // Mouse coordinates;
 int mouse_x, mouse_y;
@@ -255,10 +255,10 @@ bool checkRightCollision() {
 void update() {
 
     // Right paddle follows the player's mouse movement on the y-axis
-    if (mouse)
+    if (controller == mouse)
         right_paddle_y = mouse_y;
 
-    else if (joystick)
+    else if (controller == joystick)
         right_paddle_y += value;
 
     /* Basic AI */
@@ -554,6 +554,15 @@ void initialize() {
 }
 
 int main(int argc, char *argv[]) {
+    
+    if (argc == 2) {
+        if ( strcmp(argv[1], "keyboard") == 0 )
+            controller = keyboard;
+        else if ( strcmp(argv[1], "joystick") == 0 )
+            controller = joystick;
+        else
+            controller = mouse;
+    }
 
     srand(time(NULL));
     initialize();

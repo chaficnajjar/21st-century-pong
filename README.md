@@ -6,7 +6,7 @@ Pong clone written in C++ with SDL 2.0.
 ![Screenshot 1](./screenshots/Screenshot1.png)  ![Screenshot 2](./screenshots/Screenshot2.png)
 
 Installation
-=======
+============
 
 ## Ubuntu
 
@@ -24,6 +24,11 @@ After that, just run the script ``./install.mac.sh`` and ``./pong`` to play.
 ## Windows
 
 Not yet tested.
+
+Run the game
+============
+
+To run the game, type ``./pong``. You can type ``./pong joystick`` to play with the joystick.
 
 To-do
 =====
