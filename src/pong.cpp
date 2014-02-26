@@ -93,7 +93,7 @@ int final_predicted_y;              // predicted ball position on y-axis after r
 int value = 0;
 
 // Font names
-std::string fonts[] = {"Lato-Reg.TTF", "FFFFORWA.TTF"};
+std::string fonts[] = {"resources/fonts/Lato-Reg.TTF", "resources/fonts/FFFFORWA.TTF"};
 
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
     SDL_RenderCopy(ren, tex, clip, &dst);
@@ -422,14 +422,14 @@ void render() {
 
     // Render scores
     if (left_score_changed) {
-        font_image_score1 = renderText(std::to_string(score1), "Lato-Reg.TTF", light_font, 24, renderer);
+        font_image_score1 = renderText(std::to_string(score1), "resources/fonts/Lato-Reg.TTF", light_font, 24, renderer);
         left_score_changed = false;
     }
     renderTexture(font_image_score1, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
 
     int score_font_size = 24;
     if (right_score_changed) {
-        font_image_score2 = renderText(std::to_string(score2), "Lato-Reg.TTF", dark_font, score_font_size, renderer);
+        font_image_score2 = renderText(std::to_string(score2), "resources/fonts/Lato-Reg.TTF", dark_font, score_font_size, renderer);
         right_score_changed = false;
 
     }
@@ -534,9 +534,9 @@ void initialize() {
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
 
     // Load sounds
-    paddle_sound = Mix_LoadWAV("./sounds/paddle_hit.wav");
-    wall_sound = Mix_LoadWAV("./sounds/wall_hit.wav");
-    score_sound = Mix_LoadWAV("./sounds/score_update.wav");
+    paddle_sound = Mix_LoadWAV("resources/sounds/paddle_hit.wav");
+    wall_sound = Mix_LoadWAV("resources/sounds/wall_hit.wav");
+    score_sound = Mix_LoadWAV("resources/sounds/score_update.wav");
 
     // Don't show cursor
     SDL_ShowCursor(0);
