@@ -28,6 +28,8 @@ Mix_Chunk *paddle_sound;                // holds sound produced after ball colli
 Mix_Chunk *wall_sound;                  // holds sound produced after ball collides with wall
 Mix_Chunk *score_sound;                 // holds sound produced when updating score
 
+SDL_Joystick *gamepad;                  // holds joystick information
+
 SDL_Color dark_font = {67, 68, 69};     // dark grey
 SDL_Color light_font = {187, 191, 194}; // light grey
 
@@ -38,8 +40,9 @@ int SCREEN_WIDTH = 640;
 int SCREEN_HEIGHT = 480;
 
 // Controllers
-bool mouse = true;
+bool mouse = false;
 bool keyboard = false;
+bool joystick = true;
 
 // Mouse coordinates;
 int mouse_x, mouse_y;
@@ -87,6 +90,9 @@ bool right_score_changed = true;    // indicates when rendering new score is nec
 
 // Prediction
 int final_predicted_y;              // predicted ball position on y-axis after right paddle collision (used for paddle AI)
+
+// Gamepad direction
+int value = 0;
 
 // Font names
 string fonts[] = {"Lato-Reg.TTF", "FFFFORWA.TTF"};
@@ -163,6 +169,21 @@ void input() {
         if (event.type == SDL_QUIT)
             done = true;
 
+        // Joystick direction controller moved
+        if (event.type == SDL_JOYAXISMOTION) {
+            // 32767
+            // Up or down
+            if (event.jaxis.axis == 1)
+                value = event.jaxis.value/5461;
+        }
+
+        // Joystick action button pressed
+        if (event.type == SDL_JOYBUTTONDOWN)  {
+            // As if space bar was pressed
+            event.type = SDL_KEYDOWN;
+            event.key.keysym.sym = SDLK_SPACE;
+        }
+
         // Pressing a key
         if (event.type == SDL_KEYDOWN)
             switch(event.key.keysym.sym) {
@@ -193,6 +214,7 @@ void input() {
                     }
                     break;
 
+
                 // Pressing F11 to toggle fullscreen
                 case SDLK_F11:
                     int flags = SDL_GetWindowFlags(window);
@@ -201,6 +223,7 @@ void input() {
                     else
                         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
                     break;
+                
             }
 
     }
@@ -232,8 +255,11 @@ bool checkRightCollision() {
 void update() {
 
     // Right paddle follows the player's mouse movement on the y-axis
-    if (mouse == true)
+    if (mouse)
         right_paddle_y = mouse_y;
+
+    else if (joystick)
+        right_paddle_y += value;
 
     /* Basic AI */
     // Ball on the left 3/5th side of the screen and going left
@@ -258,7 +284,9 @@ void update() {
 
     /* Paddle-wall collision */
 
-    // No need to anticipate the right paddle going above the screen, mouse coordinates cannot be negative
+    // Right paddle shouldn't be allowed to go above the screeen
+    if (right_paddle_y < 0)
+        right_paddle_y = 0;
 
     // Right paddle shouldn't be allowed to go below the screen
     if (right_paddle_y + PADDLE_HEIGHT > SCREEN_HEIGHT)
@@ -459,6 +487,9 @@ void cleanUp() {
     // Quit SDL_mixer
     Mix_CloseAudio();
 
+    // Close joystick
+    SDL_JoystickClose(gamepad);
+
     // Destroy renderer and window
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -512,6 +543,14 @@ void initialize() {
     // Don't show cursor
     SDL_ShowCursor(0);
 
+    printf("%i joysticks were found.\n\n", SDL_NumJoysticks() );
+    printf("The names of the joysticks are:\n");
+                        
+    SDL_JoystickEventState(SDL_ENABLE);
+    gamepad = SDL_JoystickOpen(0);
+
+    for(int i = 0; i < SDL_NumJoysticks(); i++) 
+        cout << "\t" << SDL_JoystickName(gamepad) << endl;
 }
 
 int main(int argc, char *argv[]) {
