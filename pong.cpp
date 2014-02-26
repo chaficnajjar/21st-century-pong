@@ -10,7 +10,6 @@
 #include <SDL2/SDL_mixer.h>             // SDL sound library
 #include <cmath>                        // abs()
 #include <ctime>                        // rand()
-#include <cstring>
 
 #include <iostream>
 using namespace std;
