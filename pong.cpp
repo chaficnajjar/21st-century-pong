@@ -109,7 +109,7 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *
     }
 
     else
-        SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(tex, nullptr, nullptr, &dst.w, &dst.h);
 
     renderTexture(tex, ren, dst, clip);
 }
@@ -562,7 +562,7 @@ int main(int argc, char *argv[]) {
             controller = mouse;
     }
 
-    srand(time(NULL));
+    srand(time(nullptr));
     initialize();
     gameLoop();
     return 0;
