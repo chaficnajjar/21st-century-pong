@@ -33,12 +33,13 @@ To-do
 
 + ~~Comment code~~
 + ~~Enhence AI~~
-+ Finish the Windows version
 + ~~Add collision sounds~~
++ ~~Add joystick support~~
++ ~~Convert to OOP~~
++ Finish the Windows version
 + Add game menu
 + Add themes
 + Add keyboard support
-+ Add joypad support
 + Add multiplayer option (local and remote)
 + Add different resolutions
 + Add AI difficulty

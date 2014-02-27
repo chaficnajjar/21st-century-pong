@@ -1,160 +1,99 @@
 
 /*
- *  Pong game
- *  Author: Chafic Najjar <chafic.najjar@gmail.com>
- *  Note: Origin of the coordinate system is the upper left corner of the screen
+ *  Pong class definition
  */
 
-#include <SDL2/SDL.h>                   // SDL library
-#include <SDL2/SDL_ttf.h>               // SDL font library
-#include <SDL2/SDL_mixer.h>             // SDL sound library
-#include <cmath>                        // abs()
-#include <ctime>                        // rand()
+#include "pong.hpp"
 
-#include <iostream>
+Pong::Pong(int argc, char *argv[]) {
 
-SDL_Window*     window;                 // holds window properties
-SDL_Renderer*   renderer;               // holds rendering surface properties
+    /* Initilize SDL */
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_ShowCursor(0);      // don't show cursor
 
-SDL_Texture*    font_image_score1;      // holds text indicating player 1 score (left)
-SDL_Texture*    font_image_score2;      // holds text indicating palyer 2 score (right)
-SDL_Texture*    font_image_winner;      // holds text indicating winner
-SDL_Texture*    font_image_restart;     // holds text suggesting to restart the game
-SDL_Texture*    font_image_launch1;     // holds first part of text suggesting to launch the ball
-SDL_Texture*    font_image_launch2;     // holds second part of text suggesting to launch the ball
+    /* Window and renderer */
+    window = SDL_CreateWindow("Pong",
+            SDL_WINDOWPOS_UNDEFINED,        // centered window
+            SDL_WINDOWPOS_UNDEFINED,        // centered window
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            SDL_WINDOW_SHOWN);
+            
+    renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
-Mix_Chunk *paddle_sound;                // holds sound produced after ball collides with paddle
-Mix_Chunk *wall_sound;                  // holds sound produced after ball collides with wall
-Mix_Chunk *score_sound;                 // holds sound produced when updating score
+    /* Game objects */
+    ball = new Ball(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    left_paddle = new Paddle(40, SCREEN_HEIGHT/2-30);
+    right_paddle = new Paddle(SCREEN_WIDTH-(40+Paddle::WIDTH), SCREEN_HEIGHT/2-30);
 
-SDL_Joystick *gamepad;                  // holds joystick information
+    /* Sounds */
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);  // initialize SDL_mixer
 
-SDL_Color dark_font = {67, 68, 69};     // dark grey
-SDL_Color light_font = {187, 191, 194}; // light grey
+    paddle_sound = Mix_LoadWAV("resources/sounds/paddle_hit.wav");      // load paddle sound
+    wall_sound = Mix_LoadWAV("resources/sounds/wall_hit.wav");          // load wall sound
+    score_sound = Mix_LoadWAV("resources/sounds/score_update.wav");     // load score sound
 
-bool done = false;                      // true when player exits game
+    /* Controllers */
+    if (argc == 2) { 
+        if ( strcmp(argv[1], "keyboard") == 0 )
+            controller = keyboard;
+        else if ( strcmp(argv[1], "joystick") == 0 )
+            controller = joystick;
+        else
+            controller = mouse;
+    } else
+        controller = mouse;     // default controller
 
-// Screen resolution
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+    if (controller == joystick) {
+        printf("%i joysticks were found.\n\n", SDL_NumJoysticks() );
+        printf("The names of the joysticks are:\n");
 
-// Controllers
-enum Controllers {mouse, keyboard, joystick};
-Controllers controller;
+        for(int i = 0; i < SDL_NumJoysticks(); i++) 
+            std::cout << "\t" << SDL_JoystickName(gamepad) << std::endl;
+                        
+        SDL_JoystickEventState(SDL_ENABLE);     // initialize joystick controller
+        gamepad = SDL_JoystickOpen(0);          // give control to the first joystick
 
-// Mouse coordinates;
-int mouse_x, mouse_y;
-
-// Paddle lengths
-const int PADDLE_WIDTH = 10;
-const int PADDLE_HEIGHT = 60;
-
-// Paddle position
-int left_paddle_x = 40; 
-int left_paddle_y = SCREEN_HEIGHT / 2 - 30;
-
-int right_paddle_x = SCREEN_WIDTH - (40+PADDLE_WIDTH);
-int right_paddle_y = SCREEN_HEIGHT / 2 - 30;
-
-// Launch ball
-bool launch_ball = false;
-
-// Ball dimensions
-const int BALL_WIDTH = 10;
-const int BALL_HEIGHT = 10;
-
-// Ball position
-int x_ball = SCREEN_WIDTH / 2;
-int y_ball = SCREEN_HEIGHT / 2;
-
-// Ball movement
-int ball_dx = 0;        // movement in pixels over the x-axis for the next frame (speed on the x-axis)
-int ball_dy = 0;        // movement in pixels over the y-axis for the next frame (speed on the y-axis)
-
-int speed = 8;          // ball speed = √(dx²+dy²)
-int hit_count = 0;      // counts the number of hits of the ball with the right paddle
-                        // after three hits, speed increases by one 
-
-float angle = 0.0f;     // angle on collision with paddle
-
-bool bounce = false;    // true when next frame renders ball after collision impact (ball has bounced)
-
-// Match score
-int score1 = 0;
-int score2 = 0;
-
-bool left_score_changed = true;     // indicates when rendering new score is necessary 
-bool right_score_changed = true;    // indicates when rendering new score is necessary 
-
-// Prediction
-int final_predicted_y;              // predicted ball position on y-axis after right paddle collision (used for paddle AI)
-
-// Gamepad direction
-int value = 0;
-
-// Font names
-std::string fonts[] = {"resources/fonts/Lato-Reg.TTF", "resources/fonts/FFFFORWA.TTF"};
-
-void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
-    SDL_RenderCopy(ren, tex, clip, &dst);
-}
-
-void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip = nullptr) {
-    SDL_Rect dst;
-    dst.x = x;
-    dst.y = y;
-    if (clip != nullptr){
-        dst.w = clip->w;
-        dst.h = clip->h;
+        gamepad_direction = 0;
     }
 
-    else
-        SDL_QueryTexture(tex, nullptr, nullptr, &dst.w, &dst.h);
+    /* Fonts */
+    TTF_Init();     // initialize font
 
-    renderTexture(tex, ren, dst, clip);
-}
+    dark_font = {67, 68, 69};       // dark grey
+    light_font = {187, 191, 194};   // light grey
 
-SDL_Texture* renderText(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
-    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
+    fonts[0] = "resources/fonts/Lato-Reg.TTF";
+    fonts[1] = "resources/fonts/FFFFORWA.TTF";
 
-    SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
+    font_image_launch1 = renderText("Press SPA", fonts[0], light_font, 18, renderer);
+    font_image_launch2 = renderText("CE to start", fonts[0], dark_font, 18, renderer);
 
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
+    /* Scores */
+    left_score = 0;
+    right_score = 0;
+    left_score_changed = true;     // indicates when rendering new score is necessary 
+    right_score_changed = true;    // indicates when rendering new score is necessary 
 
-    SDL_FreeSurface(surf);
-    TTF_CloseFont(font);
-    return texture;
-}
-
-// Imprecise prediction of ball position on the y-axis after right paddle collision 
-int predict() {
-
-    // Find slope
-    float slope = (float)(y_ball - y_ball+ball_dy)/(x_ball - x_ball+ball_dx);
-
-    // Distance between paddles
-    int paddle_distance = right_paddle_x - (left_paddle_x+PADDLE_WIDTH); 
-
-    // Prediction without taking into consideration upper and bottom wall collisions
-    int predicted_y = abs(slope * -(paddle_distance) + y_ball);
-
-    // Calculate number of reflexions
-    int number_of_reflexions = predicted_y / SCREEN_HEIGHT;
-
-    // Predictions taking into consideration upper and bottom wall collisions
-    if (number_of_reflexions % 2 == 0)                      // Even number of reflexions
-        predicted_y = predicted_y % SCREEN_HEIGHT;
-    else                                                    // Odd number of reflexsion
-        predicted_y = SCREEN_HEIGHT - (predicted_y % SCREEN_HEIGHT);
-
-    return predicted_y;
+    /* Game states */
+    exit = false;
 
 }
 
-// Get user input
-void input() {
+void Pong::execute() {
 
-    SDL_Event event;    // stores next event to be processed
+    while(!exit) {
+        input();
+        update();
+        render();
+    }
+
+    clean_up();
+}
+
+void Pong::input() {
+
+    SDL_Event event;    // next event to be processed
 
     // Queuing events
     while(SDL_PollEvent(&event)) {
@@ -165,14 +104,14 @@ void input() {
 
         // Clicking 'x' or pressing F4
         if (event.type == SDL_QUIT)
-            done = true;
+            exit = true;
 
         // Joystick direction controller moved
         if (event.type == SDL_JOYAXISMOTION) {
             // 32767
             // Up or down
             if (event.jaxis.axis == 1)
-                value = event.jaxis.value/5461;
+                gamepad_direction = event.jaxis.value/5461;
         }
 
         // Joystick action button pressed
@@ -188,27 +127,27 @@ void input() {
 
                 // Pressing ESC exits from the game
                 case SDLK_ESCAPE:
-                    done = true;
+                    exit = true;
                     break;
 
                 // Pressing space will launch the ball if it isn't already launched
                 case SDLK_SPACE:
-                    if (!launch_ball) {
-                        int direction = 1+(-2)*(rand()%2);                  // either 1 or -1
-                        angle = rand()%120-60;                              // between -60 and 59
-                        ball_dx = direction*speed*cos(angle*M_PI/180.0f);   // speed on the x-axis
-                        ball_dy = speed*sin(angle*M_PI/180.0f);             // speed on the y-axis
+                    if (!ball->launched) {
+                        int direction = 1+(-2)*(rand()%2);                              // either 1 or -1
+                        ball->angle = rand()%120-60;                                    // between -60 and 59
+                        ball->dx = direction*ball->speed*cos(ball->angle*M_PI/180.0f);  // speed on the x-axis
+                        ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);            // speed on the y-axis
 
                         // Find slope
-                        float slope = (float)(y_ball - y_ball+ball_dy)/(x_ball - x_ball+ball_dx);
+                        float slope = (float)(ball->y - ball->y+ball->dy)/(ball->x - ball->x+ball->dx);
 
                         // Distance between left paddle and center
-                        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle_x+PADDLE_WIDTH); 
+                        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle->x+Paddle::WIDTH); 
 
                         // Predicting where the left paddle should go in case ball is launched left
-                        final_predicted_y = abs(slope * -(paddle_distance) + y_ball);
+                        ball->predicted_y = abs(slope * -(paddle_distance) + ball->y);
 
-                        launch_ball = true;
+                        ball->launched = true;
                     }
                     break;
 
@@ -227,150 +166,129 @@ void input() {
     }
 }
 
-// Check if collision with left paddle occurs in next frame
-bool checkLeftCollision() {
-    if (!(x_ball + ball_dx <= left_paddle_x + PADDLE_WIDTH))
-        return false;
-    if (x_ball < left_paddle_x)
-        return false;
-    if (!(y_ball + BALL_WIDTH >= left_paddle_y && y_ball <= left_paddle_y + PADDLE_HEIGHT))
-        return false;
-    return true;
-}
-
-// Check if collision with right paddle occurs in next frame
-bool checkRightCollision() {
-    if (!(x_ball + BALL_WIDTH + ball_dx >= right_paddle_x))
-        return false; 
-    if (x_ball > right_paddle_x + PADDLE_WIDTH)
-        return false;
-    if (!(y_ball + BALL_WIDTH > right_paddle_y && y_ball <= right_paddle_y + PADDLE_HEIGHT))
-        return false;
-    return true;
-}
-
 // Update game values
-void update() {
+void Pong::update() {
+
 
     // Right paddle follows the player's mouse movement on the y-axis
     if (controller == mouse)
-        right_paddle_y = mouse_y;
+        right_paddle->y = mouse_y;
 
     else if (controller == joystick)
-        right_paddle_y += value;
+        right_paddle->y += gamepad_direction;
 
     /* Basic AI */
     // Ball on the left 3/5th side of the screen and going left
-    if (x_ball < SCREEN_WIDTH*3/5 && ball_dx < 0) { 
+    if (ball->x < SCREEN_WIDTH*3/5 && ball->dx < 0) { 
         // Follow the ball
-        if (left_paddle_y + (PADDLE_HEIGHT - BALL_HEIGHT)/2 < final_predicted_y-2)
-            left_paddle_y += speed/8 * 5;
-        else if (left_paddle_y + (PADDLE_HEIGHT - BALL_HEIGHT)/2 > final_predicted_y+2)
-            left_paddle_y -= speed/8 * 5;
+        if (left_paddle->y + (Paddle::HEIGHT - ball->HEIGHT)/2 < ball->predicted_y-2)
+            left_paddle->y += ball->speed/8 * 5;
+        else if (left_paddle->y + (Paddle::HEIGHT - ball->HEIGHT)/2 > ball->predicted_y+2)
+            left_paddle->y -= ball->speed/8 * 5;
     }
 
     // Ball is anywhere on the screen but going right
-    else if (ball_dx >= 0) {
+    else if (ball->dx >= 0) {
 
         // Left paddle slowly moves to the center
-        if (left_paddle_y + PADDLE_HEIGHT / 2 < SCREEN_HEIGHT/2)
-            left_paddle_y += 2;
-        else if (left_paddle_y + PADDLE_HEIGHT / 2 > SCREEN_HEIGHT/2) 
-            left_paddle_y -= 2;
+        if (left_paddle->y + Paddle::HEIGHT / 2 < SCREEN_HEIGHT/2)
+            left_paddle->y += 2;
+        else if (left_paddle->y + Paddle::HEIGHT / 2 > SCREEN_HEIGHT/2) 
+            left_paddle->y -= 2;
     }
 
 
     /* Paddle-wall collision */
 
     // Right paddle shouldn't be allowed to go above the screeen
-    if (right_paddle_y < 0)
-        right_paddle_y = 0;
+    if (right_paddle->y < 0)
+        right_paddle->y = 0;
 
     // Right paddle shouldn't be allowed to go below the screen
-    if (right_paddle_y + PADDLE_HEIGHT > SCREEN_HEIGHT)
-        right_paddle_y = SCREEN_HEIGHT - PADDLE_HEIGHT;
+    if (right_paddle->y + Paddle::HEIGHT > SCREEN_HEIGHT)
+        right_paddle->y = SCREEN_HEIGHT - Paddle::HEIGHT;
 
 
     // Left paddle shouldn't be allowed to go above the screen
-    if (left_paddle_y < 0)
-        left_paddle_y = 0;
+    if (left_paddle->y < 0)
+        left_paddle->y = 0;
 
     // Left paddle shouldn't be allowed to below the screen
-    else if (left_paddle_y + PADDLE_HEIGHT > SCREEN_HEIGHT)
-        left_paddle_y = SCREEN_HEIGHT - PADDLE_HEIGHT;
+    else if (left_paddle->y + Paddle::HEIGHT > SCREEN_HEIGHT)
+        left_paddle->y = SCREEN_HEIGHT - Paddle::HEIGHT;
 
-    // We're done updating values if the ball hasn't been launched yet
-    if (!launch_ball)
+    // We're exit updating values if the ball hasn't been launched yet
+    if (!ball->launched)
         return;
 
     // Three hits => increment ball speed and reset hit counter
-    if (hit_count == 3) {
-        speed++;
-        hit_count = 0;
+    if (ball->hit_count == 3) {
+        ball->speed++;
+        ball->hit_count = 0;
     }
 
     // Smooth collision between ball and left paddle
     if (checkLeftCollision()) {
-            if (bounce) {
+            if (ball->bounce) {
                 // y coordinate of the ball in relation to the left paddle (from 0 to 70)
-                int left_relative_y = (y_ball - left_paddle_y + BALL_HEIGHT);
+                int left_relative_y = (ball->y - left_paddle->y + ball->HEIGHT);
                 
                 // Angle formed between ball direction and left paddle after collision
-                angle = (2.14f * left_relative_y - 75.0f);
+                ball->angle = (2.14f * left_relative_y - 75.0f);
 
-                ball_dx = speed*cos(angle*M_PI/180.0f); // convert angle to radian, find its cos() and multiply by the speed
-                ball_dy = speed*sin(angle*M_PI/180.0f); // convert angle to radina, find its sin() and multiply by the speed
-                bounce = false;                         // finished bouncing
+                ball->dx = ball->speed*cos(ball->angle*M_PI/180.0f);    // convert angle to radian, find its cos() and multiply by the speed
+                ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);    // convert angle to radina, find its sin() and multiply by the speed
+                ball->bounce = false;                                   // finished bouncing
 
             }
-            x_ball = left_paddle_x + PADDLE_WIDTH;      // deposit ball on left paddle surface (smooth collision)
-            bounce = true;                              // bounce ball on next frame
-            Mix_PlayChannel(-1, paddle_sound, 0);       // Play collision sound
+            ball->x = left_paddle->x + Paddle::WIDTH;                   // deposit ball on left paddle surface (smooth collision)
+            ball->bounce = true;                                        // bounce ball on next frame
+            Mix_PlayChannel(-1, paddle_sound, 0);                       // play collision sound
     }
 
     // Smooth collision between ball and right paddle
     else if (checkRightCollision()) {
-            if (bounce) {
+            if (ball->bounce) {
                 // y coordinate of the ball in relation to the right paddle (from 0 to 70)
-                int right_relative_y = (y_ball - right_paddle_y + BALL_HEIGHT);
+                int right_relative_y = (ball->y - right_paddle->y + ball->HEIGHT);
 
                 // Angle formed between ball direction and right paddle after collision
-                angle = (2.14 * right_relative_y - 75.0f);
+                ball->angle = (2.14 * right_relative_y - 75.0f);
 
-                ball_dx = -speed*cos(angle*M_PI/180.0f);// convert angle to radian, find its cos() and multiply by the negative of speed
-                ball_dy = speed*sin(angle*M_PI/180.0f); // convert angle to radian, find its sin() and multiply by the speed
-                bounce = false;                         // finished bouncing
+                ball->dx = -ball->speed*cos(ball->angle*M_PI/180.0f);   // convert angle to radian, find its cos() and multiply by the negative of speed
+                ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);    // convert angle to radian, find its sin() and multiply by the speed
+                ball->bounce = false;                                   // finished bouncing
             }
-            x_ball = right_paddle_x - BALL_WIDTH;       // deposit ball on surface right paddle surface (smooth collision)
-            hit_count++;                                // increment hit counter
-            bounce = true;                              // bounce ball on next frame
-            Mix_PlayChannel(-1, paddle_sound, 0);       // play collision sound
+            ball->x = right_paddle->x - ball->WIDTH;                    // deposit ball on surface right paddle surface (smooth collision)
+            ball->hit_count++;                                          // increment hit counter
+            ball->bounce = true;                                        // bounce ball on next frame
+            Mix_PlayChannel(-1, paddle_sound, 0);                       // play collision sound
 
-            final_predicted_y = predict();              // predict ball position for AI to intercept
+            ball->predicted_y = predict();                              // predict ball position for AI to intercept
 
     }
 
     // Upper and bottom walls collision
-    else if ( (y_ball + ball_dy < 0) || (y_ball + BALL_HEIGHT + ball_dy >= SCREEN_HEIGHT) ) {
-        ball_dy *= -1;                                  // reverse ball direction on y-axis
+    else if ( (ball->y + ball->dy < 0) || (ball->y + ball->HEIGHT + ball->dy >= SCREEN_HEIGHT) ) {
+        ball->dy *= -1;                                 // reverse ball direction on y-axis
         Mix_PlayChannel(-1, wall_sound, 0);             // play collision sound
     }
 
     // No collision occurs, update ball coordinates
     else {
-        x_ball += ball_dx;
-        y_ball += ball_dy;
+        ball->x += ball->dx;
+        ball->y += ball->dy;
     }
 
     // If ball goes out...
-    if (x_ball > SCREEN_WIDTH || x_ball < 0) {
+    if (ball->x > SCREEN_WIDTH || ball->x < 0) {
 
         // Change score
-        if (x_ball > SCREEN_WIDTH) {
-            score1++;
+        if (ball->x > SCREEN_WIDTH) {
+            left_score++;
             left_score_changed = true;
         } else {
-            score2++;
+            right_score++;
             right_score_changed = true;
         }
 
@@ -378,23 +296,23 @@ void update() {
         Mix_PlayChannel(-1, score_sound, 0); 
 
         // Reset ball position as before launch
-        x_ball = SCREEN_WIDTH / 2;
-        y_ball = SCREEN_HEIGHT / 2;
+        ball->x = SCREEN_WIDTH / 2;
+        ball->y = SCREEN_HEIGHT / 2;
         
         // Ball is fixed
-        ball_dx = 0;
-        ball_dy = 0;
-        launch_ball = false;
+        ball->dx = 0;
+        ball->dy = 0;
+        ball->launched = false;
 
         // Speed and hit counter are reset to their initial positions
-        speed = 8;
-        hit_count = 0; 
+        ball->speed = 8;
+        ball->hit_count = 0; 
     }
 
 }
 
 // Render objects on screen
-void render() {
+void Pong::render() {
 
     // Clear screen (background color)
     SDL_SetRenderDrawColor( renderer, 67, 68, 69, 255 );        // dark grey
@@ -409,59 +327,59 @@ void render() {
     SDL_SetRenderDrawColor( renderer, 212, 120, 102, 255 );
 
     // Render filled paddle
-    SDL_Rect paddle1 = { left_paddle_x, left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT };
+    SDL_Rect paddle1 = { left_paddle->x, left_paddle->y, Paddle::WIDTH, Paddle::HEIGHT };
     SDL_RenderFillRect( renderer, &paddle1 );
 
     // Render filled paddle
-    SDL_Rect paddle2 = { right_paddle_x, right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT };
+    SDL_Rect paddle2 = { right_paddle->x, right_paddle->y, Paddle::WIDTH, Paddle::HEIGHT };
     SDL_RenderFillRect( renderer, &paddle2 );
 
     // Render ball
-    SDL_Rect ball = { x_ball - BALL_WIDTH / 2, y_ball, BALL_WIDTH, BALL_HEIGHT };
-    SDL_RenderFillRect(renderer, &ball);
+    SDL_Rect pong_ball = { ball->x - ball->WIDTH / 2, ball->y, ball->WIDTH, ball->HEIGHT };
+    SDL_RenderFillRect(renderer, &pong_ball);
 
     // Render scores
     if (left_score_changed) {
-        font_image_score1 = renderText(std::to_string(score1), "resources/fonts/Lato-Reg.TTF", light_font, 24, renderer);
+        font_image_left_score = renderText(std::to_string(left_score), "resources/fonts/Lato-Reg.TTF", light_font, 24, renderer);
         left_score_changed = false;
     }
-    renderTexture(font_image_score1, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
+    renderTexture(font_image_left_score, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
 
     int score_font_size = 24;
     if (right_score_changed) {
-        font_image_score2 = renderText(std::to_string(score2), "resources/fonts/Lato-Reg.TTF", dark_font, score_font_size, renderer);
+        font_image_right_score = renderText(std::to_string(right_score), "resources/fonts/Lato-Reg.TTF", dark_font, score_font_size, renderer);
         right_score_changed = false;
 
     }
-    renderTexture(font_image_score2, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT/ 12);
+    renderTexture(font_image_right_score, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT/ 12);
 
     // Render text indicating the winner
-    if (score1 == 5) {
+    if (left_score == 5) {
         font_image_winner = renderText("Player 1 won!", fonts[0], light_font, 24, renderer);
         renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 4);   // align with score
         font_image_restart = renderText("Press SPACE to restart", fonts[0], light_font, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 3);
-        if (launch_ball) {
-            score1 = 0;
-            score2 = 0;
+        if (ball->launched) {
+            left_score = 0;
+            right_score = 0;
             left_score_changed = true;
             right_score_changed = true;
         }
-    } else if (score2 == 5) {
+    } else if (right_score == 5) {
         font_image_winner = renderText("Player 2 won!", fonts[0], dark_font, 24, renderer);
         renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 4);   // align with score
         font_image_restart = renderText("Press SPACE to restart", fonts[0], dark_font, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 3);
-        if (launch_ball) {
-            score1 = 0;
-            score2 = 0;
+        if (ball->launched) {
+            left_score = 0;
+            right_score = 0;
             left_score_changed = true;
             right_score_changed = true;
         }
     }
 
     // Draw "Press SPACE to start"
-    else if (!launch_ball) {
+    else if (!ball->launched) {
         renderTexture(font_image_launch1, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
         renderTexture(font_image_launch2, renderer, SCREEN_WIDTH / 2 + 1, SCREEN_HEIGHT - 25);
     }
@@ -471,11 +389,13 @@ void render() {
 
 }
 
-void cleanUp() {
+
+
+void Pong::clean_up() {
 
     // Destroy textures
-    SDL_DestroyTexture(font_image_score1);
-    SDL_DestroyTexture(font_image_score2);
+    SDL_DestroyTexture(font_image_left_score);
+    SDL_DestroyTexture(font_image_right_score);
 
     // Free the sound effects
     Mix_FreeChunk(paddle_sound);
@@ -486,7 +406,8 @@ void cleanUp() {
     Mix_CloseAudio();
 
     // Close joystick
-    SDL_JoystickClose(gamepad);
+    if (controller == joystick)
+        SDL_JoystickClose(gamepad);
 
     // Destroy renderer and window
     SDL_DestroyRenderer(renderer);
@@ -496,75 +417,83 @@ void cleanUp() {
     SDL_Quit();
 }
 
-void gameLoop() {
+// Imprecise prediction of ball position on the y-axis after right paddle collision 
+int Pong::predict() {
 
-    while(!done) {
-        input();
-        update();
-        render();
+    // Find slope
+    float slope = (float)(ball->y - ball->y+ball->dy)/(ball->x - ball->x+ball->dx);
+
+    // Distance between paddles
+    int paddle_distance = right_paddle->x - (left_paddle->x+Paddle::WIDTH); 
+
+    // Prediction without taking into consideration upper and bottom wall collisions
+    int predicted_y = abs(slope * -(paddle_distance) + ball->y);
+
+    // Calculate number of reflexions
+    int number_of_reflexions = predicted_y / SCREEN_HEIGHT;
+
+    // Predictions taking into consideration upper and bottom wall collisions
+    if (number_of_reflexions % 2 == 0)                      // Even number of reflexions
+        predicted_y = predicted_y % SCREEN_HEIGHT;
+    else                                                    // Odd number of reflexsion
+        predicted_y = SCREEN_HEIGHT - (predicted_y % SCREEN_HEIGHT);
+
+    return predicted_y;
+
+}
+
+
+// Check if collision with left paddle occurs in next frame
+bool Pong::checkLeftCollision() {
+    if (!(ball->x + ball->dx <= left_paddle->x + Paddle::WIDTH))
+        return false;
+    if (ball->x < left_paddle->x)
+        return false;
+    if (!(ball->y + ball->WIDTH >= left_paddle->y && ball->y <= left_paddle->y + Paddle::HEIGHT))
+        return false;
+    return true;
+}
+
+// Check if collision with right paddle occurs in next frame
+bool Pong::checkRightCollision() {
+    if (!(ball->x + ball->WIDTH + ball->dx >= right_paddle->x))
+        return false; 
+    if (ball->x > right_paddle->x + Paddle::WIDTH)
+        return false;
+    if (!(ball->y + ball->WIDTH > right_paddle->y && ball->y <= right_paddle->y + Paddle::HEIGHT))
+        return false;
+    return true;
+}
+
+
+void Pong::renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip) {
+    SDL_RenderCopy(ren, tex, clip, &dst);
+}
+
+void Pong::renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip) {
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    if (clip != nullptr){
+        dst.w = clip->w;
+        dst.h = clip->h;
     }
 
-    cleanUp();
+    else
+        SDL_QueryTexture(tex, nullptr, nullptr, &dst.w, &dst.h);
+
+    renderTexture(tex, ren, dst, clip);
 }
 
-void initialize() {
+SDL_Texture* Pong::renderText(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
+    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
 
-    // Initialize SDL
-    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
 
-    // Create window in the middle of the screen
-    window = SDL_CreateWindow( "Pong",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN);
-            
-    // Create renderer in order to draw on window
-    renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
 
-    // Initialize font
-    TTF_Init();
-
-    // Holds text "Press SPACE to start"
-    font_image_launch1 = renderText("Press SPA", fonts[0], light_font, 18, renderer);
-    font_image_launch2 = renderText("CE to start", fonts[0], dark_font, 18, renderer);
-
-    // Initialize SDL_Mixer
-    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
-
-    // Load sounds
-    paddle_sound = Mix_LoadWAV("resources/sounds/paddle_hit.wav");
-    wall_sound = Mix_LoadWAV("resources/sounds/wall_hit.wav");
-    score_sound = Mix_LoadWAV("resources/sounds/score_update.wav");
-
-    // Don't show cursor
-    SDL_ShowCursor(0);
-
-    printf("%i joysticks were found.\n\n", SDL_NumJoysticks() );
-    printf("The names of the joysticks are:\n");
-                        
-    SDL_JoystickEventState(SDL_ENABLE);
-    gamepad = SDL_JoystickOpen(0);
-
-    for(int i = 0; i < SDL_NumJoysticks(); i++) 
-        std::cout << "\t" << SDL_JoystickName(gamepad) << std::endl;
+    SDL_FreeSurface(surf);
+    TTF_CloseFont(font);
+    return texture;
 }
 
-int main(int argc, char *argv[]) {
-    
-    if (argc == 2) {
-        if ( strcmp(argv[1], "keyboard") == 0 )
-            controller = keyboard;
-        else if ( strcmp(argv[1], "joystick") == 0 )
-            controller = joystick;
-        else
-            controller = mouse;
-    }
-
-    srand(time(nullptr));
-    initialize();
-    gameLoop();
-    return 0;
-
-}
