@@ -48,11 +48,11 @@ Pong::Pong(int argc, char *argv[]) {
         printf("%i joysticks were found.\n\n", SDL_NumJoysticks() );
         printf("The names of the joysticks are:\n");
 
+        gamepad = SDL_JoystickOpen(0);          // give control to the first joystick
         for(int i = 0; i < SDL_NumJoysticks(); i++) 
             std::cout << "\t" << SDL_JoystickName(gamepad) << std::endl;
                         
         SDL_JoystickEventState(SDL_ENABLE);     // initialize joystick controller
-        gamepad = SDL_JoystickOpen(0);          // give control to the first joystick
 
         gamepad_direction = 0;
     }
@@ -116,9 +116,11 @@ void Pong::input() {
 
         // Joystick action button pressed
         if (event.type == SDL_JOYBUTTONDOWN)  {
+            if (!ball->launched)
+                launchBall();
             // As if space bar was pressed
-            event.type = SDL_KEYDOWN;
-            event.key.keysym.sym = SDLK_SPACE;
+            //event.type = SDL_KEYDOWN;
+            //event.key.keysym.sym = SDLK_SPACE;
         }
 
         // Pressing a key
@@ -132,23 +134,8 @@ void Pong::input() {
 
                 // Pressing space will launch the ball if it isn't already launched
                 case SDLK_SPACE:
-                    if (!ball->launched) {
-                        int direction = 1+(-2)*(rand()%2);                              // either 1 or -1
-                        ball->angle = rand()%120-60;                                    // between -60 and 59
-                        ball->dx = direction*ball->speed*cos(ball->angle*M_PI/180.0f);  // speed on the x-axis
-                        ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);            // speed on the y-axis
-
-                        // Find slope
-                        float slope = (float)(ball->y - ball->y+ball->dy)/(ball->x - ball->x+ball->dx);
-
-                        // Distance between left paddle and center
-                        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle->x+Paddle::WIDTH); 
-
-                        // Predicting where the left paddle should go in case ball is launched left
-                        ball->predicted_y = abs(slope * -(paddle_distance) + ball->y);
-
-                        ball->launched = true;
-                    }
+                    if (!ball->launched)
+                        launchBall();
                     break;
 
 
@@ -440,6 +427,25 @@ int Pong::predict() {
 
     return predicted_y;
 
+}
+
+void Pong::launchBall() {
+
+        int direction = 1+(-2)*(rand()%2);                              // either 1 or -1
+        ball->angle = rand()%120-60;                                    // between -60 and 59
+        ball->dx = direction*ball->speed*cos(ball->angle*M_PI/180.0f);  // speed on the x-axis
+        ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);            // speed on the y-axis
+
+        // Find slope
+        float slope = (float)(ball->y - ball->y+ball->dy)/(ball->x - ball->x+ball->dx);
+
+        // Distance between left paddle and center
+        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle->x+Paddle::WIDTH); 
+
+        // Predicting where the left paddle should go in case ball is launched left
+        ball->predicted_y = abs(slope * -(paddle_distance) + ball->y);
+
+        ball->launched = true;
 }
 
 
