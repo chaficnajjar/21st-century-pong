@@ -5,7 +5,12 @@
 
 #include "pong.hpp"
 
+std::random_device rd;
+std::mt19937 gen(rd());
+
 Pong::Pong(int argc, char *argv[]) {
+
+    /* */
 
     /* Initilize SDL */
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -431,8 +436,13 @@ int Pong::predict() {
 
 void Pong::launchBall() {
 
-        int direction = 1+(-2)*(rand()%2);                              // either 1 or -1
-        ball->angle = rand()%120-60;                                    // between -60 and 59
+
+        std::uniform_int_distribution<int> dir(0, 1);
+        int direction = 1+(-2)*(dir(gen)%2);                            // either 1 or -1
+
+        std::uniform_int_distribution<int> ang(-60, 60);
+        ball->angle = ang(gen);                                         // between -60 and 60
+
         ball->dx = direction*ball->speed*cos(ball->angle*M_PI/180.0f);  // speed on the x-axis
         ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);            // speed on the y-axis
 

@@ -12,7 +12,7 @@
 
 #include <iostream>
 #include <cmath> 
-#include <ctime>
+#include <random>
 
 #include "ball.hpp"
 #include "paddle.hpp"
