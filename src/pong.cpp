@@ -443,7 +443,13 @@ void Pong::launchBall() {
         int paddle_distance = SCREEN_WIDTH/2 - (left_paddle->x+Paddle::WIDTH); 
 
         // Predicting where the left paddle should go in case ball is launched left
-        ball->predicted_y = abs(slope * -(paddle_distance) + ball->y);
+        if (direction == -1) {
+            ball->predicted_y = abs(slope * -(paddle_distance) + ball->y);      // case where y is negative (upper wall collision) is taken care of
+
+            // Bottom wall collision
+            if (ball->predicted_y > SCREEN_HEIGHT)
+                ball->predicted_y = SCREEN_HEIGHT - (ball->predicted_y % SCREEN_HEIGHT);
+        }
 
         ball->launched = true;
 }
