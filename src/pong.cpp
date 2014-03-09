@@ -4,6 +4,7 @@
  */
 
 #include "pong.hpp"
+#include "utilities.hpp"
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -96,7 +97,8 @@ void Pong::execute() {
 
 void Pong::input() {
 
-    SDL_Event event;    // next event to be processed
+    // Embodies events waiting to be processed
+    SDL_Event event;
 
     // Queuing events
     while(SDL_PollEvent(&event)) {
@@ -158,7 +160,6 @@ void Pong::input() {
 
 // Update game values
 void Pong::update() {
-
 
     // Right paddle follows the player's mouse movement on the y-axis
     if (controller == mouse)
@@ -359,8 +360,6 @@ void Pong::render() {
 
 }
 
-
-
 void Pong::clean_up() {
 
     // Destroy textures
@@ -414,7 +413,6 @@ int Pong::predict() {
 
 void Pong::launchBall() {
 
-
         std::uniform_int_distribution<int> dir(0, 1);
         int direction = 1+(-2)*(dir(gen)%2);                            // either 1 or -1
 
@@ -442,7 +440,6 @@ void Pong::launchBall() {
         ball->launched = true;
 }
 
-
 // Check if collision with left paddle occurs in next frame
 bool Pong::checkLeftCollision() {
     if (!(ball->x + ball->dx <= left_paddle->get_x() + Paddle::WIDTH))
@@ -464,36 +461,3 @@ bool Pong::checkRightCollision() {
         return false;
     return true;
 }
-
-
-void Pong::renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip) {
-    SDL_RenderCopy(ren, tex, clip, &dst);
-}
-
-void Pong::renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip) {
-    SDL_Rect dst;
-    dst.x = x;
-    dst.y = y;
-    if (clip != nullptr){
-        dst.w = clip->w;
-        dst.h = clip->h;
-    }
-
-    else
-        SDL_QueryTexture(tex, nullptr, nullptr, &dst.w, &dst.h);
-
-    renderTexture(tex, ren, dst, clip);
-}
-
-SDL_Texture* Pong::renderText(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
-    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
-
-    SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
-
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
-
-    SDL_FreeSurface(surf);
-    TTF_CloseFont(font);
-    return texture;
-}
-
