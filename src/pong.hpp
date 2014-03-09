@@ -16,10 +16,7 @@
 
 #include "ball.hpp"
 #include "paddle.hpp"
-
-// Screen resolution
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+#include "common.hpp"
 
 class Pong {
 
@@ -29,7 +26,7 @@ public:
     /* Window and renderer */
     SDL_Window*     window;                 // holds window properties
     SDL_Renderer*   renderer;               // holds rendering surface properties
-
+    
     /* Game objects */
     Ball *ball;
     Paddle *left_paddle;

@@ -10,8 +10,6 @@ std::mt19937 gen(rd());
 
 Pong::Pong(int argc, char *argv[]) {
 
-    /* */
-
     /* Initilize SDL */
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_ShowCursor(0);      // don't show cursor
@@ -164,50 +162,30 @@ void Pong::update() {
 
     // Right paddle follows the player's mouse movement on the y-axis
     if (controller == mouse)
-        right_paddle->y = mouse_y;
+        right_paddle->set_y(mouse_y);
 
     else if (controller == joystick)
-        right_paddle->y += gamepad_direction;
+        right_paddle->add_to_y(gamepad_direction);
 
     /* Basic AI */
     // Ball on the left 3/5th side of the screen and going left
     if (ball->x < SCREEN_WIDTH*3/5 && ball->dx < 0) { 
         // Follow the ball
-        if (left_paddle->y + (Paddle::HEIGHT - ball->HEIGHT)/2 < ball->predicted_y-2)
-            left_paddle->y += ball->speed/8 * 5;
-        else if (left_paddle->y + (Paddle::HEIGHT - ball->HEIGHT)/2 > ball->predicted_y+2)
-            left_paddle->y -= ball->speed/8 * 5;
+        if (left_paddle->get_y() + (Paddle::HEIGHT - ball->HEIGHT)/2 < ball->predicted_y-2)
+            left_paddle->add_to_y(ball->speed/8 * 5);
+        else if (left_paddle->get_y() + (Paddle::HEIGHT - ball->HEIGHT)/2 > ball->predicted_y+2)
+            left_paddle->add_to_y( -(ball->speed/8 * 5) );
     }
 
     // Ball is anywhere on the screen but going right
     else if (ball->dx >= 0) {
 
         // Left paddle slowly moves to the center
-        if (left_paddle->y + Paddle::HEIGHT / 2 < SCREEN_HEIGHT/2)
-            left_paddle->y += 2;
-        else if (left_paddle->y + Paddle::HEIGHT / 2 > SCREEN_HEIGHT/2) 
-            left_paddle->y -= 2;
+        if (left_paddle->get_y() + Paddle::HEIGHT / 2 < SCREEN_HEIGHT/2)
+            left_paddle->add_to_y(2);
+        else if (left_paddle->get_y() + Paddle::HEIGHT / 2 > SCREEN_HEIGHT/2) 
+            left_paddle->add_to_y(-2);
     }
-
-
-    /* Paddle-wall collision */
-
-    // Right paddle shouldn't be allowed to go above the screeen
-    if (right_paddle->y < 0)
-        right_paddle->y = 0;
-
-    // Right paddle shouldn't be allowed to go below the screen
-    if (right_paddle->y + Paddle::HEIGHT > SCREEN_HEIGHT)
-        right_paddle->y = SCREEN_HEIGHT - Paddle::HEIGHT;
-
-
-    // Left paddle shouldn't be allowed to go above the screen
-    if (left_paddle->y < 0)
-        left_paddle->y = 0;
-
-    // Left paddle shouldn't be allowed to below the screen
-    else if (left_paddle->y + Paddle::HEIGHT > SCREEN_HEIGHT)
-        left_paddle->y = SCREEN_HEIGHT - Paddle::HEIGHT;
 
     // We're exit updating values if the ball hasn't been launched yet
     if (!ball->launched)
@@ -223,7 +201,7 @@ void Pong::update() {
     if (checkLeftCollision()) {
             if (ball->bounce) {
                 // y coordinate of the ball in relation to the left paddle (from 0 to 70)
-                int left_relative_y = (ball->y - left_paddle->y + ball->HEIGHT);
+                int left_relative_y = (ball->y - left_paddle->get_y() + ball->HEIGHT);
                 
                 // Angle formed between ball direction and left paddle after collision
                 ball->angle = (2.14f * left_relative_y - 75.0f);
@@ -233,7 +211,7 @@ void Pong::update() {
                 ball->bounce = false;                                   // finished bouncing
 
             }
-            ball->x = left_paddle->x + Paddle::WIDTH;                   // deposit ball on left paddle surface (smooth collision)
+            ball->x = left_paddle->get_x() + Paddle::WIDTH;                   // deposit ball on left paddle surface (smooth collision)
             ball->bounce = true;                                        // bounce ball on next frame
             Mix_PlayChannel(-1, paddle_sound, 0);                       // play collision sound
     }
@@ -242,7 +220,7 @@ void Pong::update() {
     else if (checkRightCollision()) {
             if (ball->bounce) {
                 // y coordinate of the ball in relation to the right paddle (from 0 to 70)
-                int right_relative_y = (ball->y - right_paddle->y + ball->HEIGHT);
+                int right_relative_y = (ball->y - right_paddle->get_y() + ball->HEIGHT);
 
                 // Angle formed between ball direction and right paddle after collision
                 ball->angle = (2.14 * right_relative_y - 75.0f);
@@ -251,7 +229,7 @@ void Pong::update() {
                 ball->dy = ball->speed*sin(ball->angle*M_PI/180.0f);    // convert angle to radian, find its sin() and multiply by the speed
                 ball->bounce = false;                                   // finished bouncing
             }
-            ball->x = right_paddle->x - ball->WIDTH;                    // deposit ball on surface right paddle surface (smooth collision)
+            ball->x = right_paddle->get_x() - ball->WIDTH;                    // deposit ball on surface right paddle surface (smooth collision)
             ball->hit_count++;                                          // increment hit counter
             ball->bounce = true;                                        // bounce ball on next frame
             Mix_PlayChannel(-1, paddle_sound, 0);                       // play collision sound
@@ -319,11 +297,11 @@ void Pong::render() {
     SDL_SetRenderDrawColor( renderer, 212, 120, 102, 255 );
 
     // Render filled paddle
-    SDL_Rect paddle1 = { left_paddle->x, left_paddle->y, Paddle::WIDTH, Paddle::HEIGHT };
+    SDL_Rect paddle1 = { left_paddle->get_x(), left_paddle->get_y(), Paddle::WIDTH, Paddle::HEIGHT };
     SDL_RenderFillRect( renderer, &paddle1 );
 
     // Render filled paddle
-    SDL_Rect paddle2 = { right_paddle->x, right_paddle->y, Paddle::WIDTH, Paddle::HEIGHT };
+    SDL_Rect paddle2 = { right_paddle->get_x(), right_paddle->get_y(), Paddle::WIDTH, Paddle::HEIGHT };
     SDL_RenderFillRect( renderer, &paddle2 );
 
     // Render ball
@@ -416,7 +394,7 @@ int Pong::predict() {
     float slope = (float)(ball->y - ball->y+ball->dy)/(ball->x - ball->x+ball->dx);
 
     // Distance between paddles
-    int paddle_distance = right_paddle->x - (left_paddle->x+Paddle::WIDTH); 
+    int paddle_distance = right_paddle->get_x() - (left_paddle->get_x()+Paddle::WIDTH); 
 
     // Prediction without taking into consideration upper and bottom wall collisions
     int predicted_y = abs(slope * -(paddle_distance) + ball->y);
@@ -450,7 +428,7 @@ void Pong::launchBall() {
         float slope = (float)(ball->y - ball->y+ball->dy)/(ball->x - ball->x+ball->dx);
 
         // Distance between left paddle and center
-        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle->x+Paddle::WIDTH); 
+        int paddle_distance = SCREEN_WIDTH/2 - (left_paddle->get_x()+Paddle::WIDTH); 
 
         // Predicting where the left paddle should go in case ball is launched left
         if (direction == -1) {
@@ -467,22 +445,22 @@ void Pong::launchBall() {
 
 // Check if collision with left paddle occurs in next frame
 bool Pong::checkLeftCollision() {
-    if (!(ball->x + ball->dx <= left_paddle->x + Paddle::WIDTH))
+    if (!(ball->x + ball->dx <= left_paddle->get_x() + Paddle::WIDTH))
         return false;
-    if (ball->x < left_paddle->x)
+    if (ball->x < left_paddle->get_x())
         return false;
-    if (!(ball->y + ball->WIDTH >= left_paddle->y && ball->y <= left_paddle->y + Paddle::HEIGHT))
+    if (!(ball->y + ball->WIDTH >= left_paddle->get_y() && ball->y <= left_paddle->get_y() + Paddle::HEIGHT))
         return false;
     return true;
 }
 
 // Check if collision with right paddle occurs in next frame
 bool Pong::checkRightCollision() {
-    if (!(ball->x + ball->WIDTH + ball->dx >= right_paddle->x))
+    if (!(ball->x + ball->WIDTH + ball->dx >= right_paddle->get_x()))
         return false; 
-    if (ball->x > right_paddle->x + Paddle::WIDTH)
+    if (ball->x > right_paddle->get_x() + Paddle::WIDTH)
         return false;
-    if (!(ball->y + ball->WIDTH > right_paddle->y && ball->y <= right_paddle->y + Paddle::HEIGHT))
+    if (!(ball->y + ball->WIDTH > right_paddle->get_y() && ball->y <= right_paddle->get_y() + Paddle::HEIGHT))
         return false;
     return true;
 }
