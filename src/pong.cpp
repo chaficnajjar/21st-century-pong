@@ -5,9 +5,15 @@
 
 #include "pong.hpp"
 #include "utilities.hpp"
+#include "ball.hpp"
+#include "paddle.hpp"
 
 std::random_device rd;
 std::mt19937 gen(rd());
+
+/* Screen resolution */
+const int Pong::SCREEN_WIDTH = 640;
+const int Pong::SCREEN_HEIGHT = 480;
 
 Pong::Pong(int argc, char *argv[]) {
 

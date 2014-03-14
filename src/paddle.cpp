@@ -4,7 +4,7 @@
  */
 
 #include "paddle.hpp"
-#include "common.hpp"
+#include "pong.hpp"
 
 Paddle::Paddle(int new_x, int new_y) {
     x = new_x;
@@ -25,8 +25,8 @@ void Paddle::set_y(int new_y) {
     // Paddle shouldn't be allowed to go above or below the screeen
     if (y < 0)
         y = 0;
-    else if (y + HEIGHT > SCREEN_HEIGHT)
-        y = SCREEN_HEIGHT - HEIGHT;
+    else if (y + HEIGHT > Pong::SCREEN_HEIGHT)
+        y = Pong::SCREEN_HEIGHT - HEIGHT;
 }
 
 void Paddle::add_to_y(int new_y) {
@@ -35,8 +35,8 @@ void Paddle::add_to_y(int new_y) {
     // Paddle shouldn't be allowed to go above or below the screeen
     if (y < 0)
         y = 0;
-    else if (y + HEIGHT > SCREEN_HEIGHT)
-        y = SCREEN_HEIGHT - HEIGHT; 
+    else if (y + HEIGHT > Pong::SCREEN_HEIGHT)
+        y = Pong::SCREEN_HEIGHT - HEIGHT; 
 }
 
 

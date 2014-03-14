@@ -6,26 +6,30 @@
 #ifndef PONG_HPP
 #define PONG_HPP
 
-#include <SDL2/SDL.h>                   // SDL library
-#include <SDL2/SDL_ttf.h>               // SDL font library
-#include <SDL2/SDL_mixer.h>             // SDL sound library
+#include <SDL2/SDL.h>                       // SDL library
+#include <SDL2/SDL_ttf.h>                   // SDL font library
+#include <SDL2/SDL_mixer.h>                 // SDL sound library
 
 #include <iostream>
 #include <cmath> 
 #include <random>
 
-#include "ball.hpp"
-#include "paddle.hpp"
-#include "common.hpp"
+// Forward declarations
+class Ball;
+class Paddle;
 
 class Pong {
 
 public:
     Pong(int argc, char *argv[]);
+    
+    /* Screen resolution */
+    static const int SCREEN_WIDTH;
+    static const int SCREEN_HEIGHT;
 
     /* Window and renderer */
-    SDL_Window*     window;                 // holds window properties
-    SDL_Renderer*   renderer;               // holds rendering surface properties
+    SDL_Window* window;                     // holds window properties
+    SDL_Renderer* renderer;                 // holds rendering surface properties
     
     /* Game objects */
     Ball *ball;
