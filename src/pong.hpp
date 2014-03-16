@@ -11,10 +11,7 @@
 #include <SDL2/SDL_mixer.h>                 // SDL sound library
 
 #include <iostream>
-#include <cmath> 
-#include <random>
 
-// Forward declarations
 class Ball;
 class Paddle;
 
@@ -42,7 +39,7 @@ public:
     Mix_Chunk *score_sound;                 // holds sound produced when updating score
 
     /* Controllers */
-    enum Controllers {mouse, keyboard, joystick};
+    enum Controllers { mouse, keyboard, joystick };
     Controllers controller;
     SDL_Joystick *gamepad;                  // holds joystick information
     int gamepad_direction;                  // gamepad direction
@@ -66,7 +63,7 @@ public:
     bool right_score_changed;               // indicates when rendering new score is necessary 
 
     /* Game states */
-    bool exit;                              // true when player exits game
+    bool exit;                              // true when player wants to exit game
 
     /* Main functions */
     void execute();
@@ -76,13 +73,6 @@ public:
     void render();
 
     void clean_up();
-
-    /* Useful functions */
-    int predict();
-    bool checkLeftCollision();
-    bool checkRightCollision();
-
-    void launchBall();
 
 };
 

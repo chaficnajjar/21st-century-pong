@@ -6,14 +6,18 @@
 #ifndef BALL_HPP
 #define BALL_HPP
 
+class Paddle;
+
 class Ball {
     public:
         Ball(int x, int y);
-        bool launched;           // Launch ball
+        
+        // Ball status
+        enum Status {READY, LAUNCH, LAUNCHED};
+        Status status;
 
         // Ball dimensions
-        static const int WIDTH = 10;
-        static const int HEIGHT = 10;
+        static const int LENGTH;
 
         // Ball position
         int x;
@@ -26,9 +30,15 @@ class Ball {
         bool bounce;        // true when next frame renders ball after collision impact (ball has bounced)
         int speed;          // ball speed = √(dx²+dy²)
         float angle;        // angle after collision with paddle
-        int hit_count;      // counts the number of hits of the ball with the right paddle, increase speed after 3 hits
+        int hits;           // counts the number of hits of the ball with the right paddle, increase speed after 3 hits
         int predicted_y;    // predicted ball position on y-axis after right paddle collision (used for paddle AI)
 
+        void launch_ball(Paddle *ai_paddle);
+        void update_speed();
+        bool wall_collision();
+        bool collides_with(Paddle *paddle);
+        void bounces_off(Paddle *paddle);
+        void reset();
 };
 
 #endif
