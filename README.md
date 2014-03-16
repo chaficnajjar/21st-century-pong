@@ -36,6 +36,8 @@ To-do
 + ~~Add collision sounds~~
 + ~~Add joystick support~~
 + ~~Convert to OOP~~
++ Test on OS X
++ Add lua code
 + Processor independant game speed
 + Finish the Windows version
 + Add game menu
