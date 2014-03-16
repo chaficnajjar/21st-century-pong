@@ -36,6 +36,7 @@ To-do
 + ~~Add collision sounds~~
 + ~~Add joystick support~~
 + ~~Convert to OOP~~
++ Processor independant game speed
 + Finish the Windows version
 + Add game menu
 + Add themes
