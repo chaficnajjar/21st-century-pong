@@ -3,33 +3,31 @@ The Pong game
 
 Pong clone written in C++ with SDL 2.0.
 
-Installation
-============
+## Installation
 
-## Ubuntu
+### Ubuntu
 
 You will need:
+
 + [SDL Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/)
 + [SDL TTF 2.0](https://www.libsdl.org/projects/SDL_ttf/)
 
-Just run ``make`` to compile and ``./pong`` to play.
+Just run `make` to compile and `./pong` to play.
 
-## Mac
+### OS X
 
 You need to have [brew](http://brew.sh/) installed.
-After that, just run the script ``./install.mac.sh`` and ``./pong`` to play.
+Just run `make` to compile and `./pong` to play
 
-## Windows
+### Windows
 
 Not yet tested.
 
-Run the game
-============
+## Run the game
 
 To run the game, type ``./pong``. You can type ``./pong joystick`` to play with the joystick.
 
-To-do
-=====
+## To-do
 
 + ~~Comment code~~
 + ~~Enhence AI~~
@@ -47,8 +45,7 @@ To-do
 + Add different resolutions
 + Add AI difficulty
 
-Credits
-=======
+## Credits
 
 Chafic Najjar - <chafic.najjar@gmail.com>
 
