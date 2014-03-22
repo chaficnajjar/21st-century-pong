@@ -270,6 +270,10 @@ void Pong::render() {
     if (left_score_changed) {
         font_image_left_score = renderText(std::to_string(left_score), "resources/fonts/Lato-Reg.TTF", light_font, 24, renderer);
         left_score_changed = false;
+        if (left_score == 5) {
+            font_image_winner = renderText("Player 1 won!", fonts[0], light_font, 24, renderer);
+            font_image_restart = renderText("Press SPACE to restart", fonts[0], light_font, 18, renderer);
+        }
     }
     renderTexture(font_image_left_score, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
 
@@ -277,15 +281,17 @@ void Pong::render() {
     if (right_score_changed) {
         font_image_right_score = renderText(std::to_string(right_score), "resources/fonts/Lato-Reg.TTF", dark_font, score_font_size, renderer);
         right_score_changed = false;
+        if (right_score == 5) {
+            font_image_winner = renderText("Player 2 won!", fonts[0], dark_font, 24, renderer);
+            font_image_restart = renderText("Press SPACE to restart", fonts[0], dark_font, 18, renderer);
+        }
 
     }
     renderTexture(font_image_right_score, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT/ 12);
 
     // Render text indicating the winner
     if (left_score == 5) {
-        font_image_winner = renderText("Player 1 won!", fonts[0], light_font, 24, renderer);
         renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 4);   // align with score
-        font_image_restart = renderText("Press SPACE to restart", fonts[0], light_font, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 1 / 10 + 3, SCREEN_HEIGHT / 3);
         if (ball->status == ball->LAUNCHED) {
             left_score = 0;
@@ -294,9 +300,7 @@ void Pong::render() {
             right_score_changed = true;
         }
     } else if (right_score == 5) {
-        font_image_winner = renderText("Player 2 won!", fonts[0], dark_font, 24, renderer);
         renderTexture(font_image_winner, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 4);   // align with score
-        font_image_restart = renderText("Press SPACE to restart", fonts[0], dark_font, 18, renderer);
         renderTexture(font_image_restart, renderer, SCREEN_WIDTH * 6 / 10 - score_font_size/2, SCREEN_HEIGHT / 3);
         if (ball->status == ball->LAUNCHED) {
             left_score = 0;
