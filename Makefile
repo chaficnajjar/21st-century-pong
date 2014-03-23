@@ -1,9 +1,13 @@
+# Use bash not sh
+SHELL := /bin/bash
+
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
-	brew install sdl
-	brew install sdl_ttf
+	$(shell brew install sdl)
+	$(shell brew install sdl_ttf)
 endif
+
 
 GCC = g++
 SOURCE = src/main.cpp src/pong.cpp src/ball.cpp src/paddle.cpp
@@ -12,7 +16,6 @@ BINARY = pong
 
 all:
 	$(GCC) $(SOURCE) -o $(BINARY) $(FLAGS)
-
 clean:
 	@rm *.o
 	@rm $(BINARY)
