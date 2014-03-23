@@ -14,5 +14,4 @@ all:
 	fi
 	$(GCC) $(SOURCE) -o $(BINARY) $(FLAGS)
 clean:
-	@rm *.o
 	@rm $(BINARY)
