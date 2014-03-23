@@ -8,7 +8,7 @@ BINARY = pong
 
 all:
 	$(GCC) $(SOURCE) -o $(BINARY) $(FLAGS)
-	if [ ! "$(uname -s)" = "Darwin" ]; then \
+	if [ "$(uname -s)" = "Darwin" ]; then \
 		brew install sdl \
 		brew install sdl_ttf \
 		brew install sdl_mixer; \
