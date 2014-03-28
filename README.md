@@ -17,7 +17,7 @@ Then, just type `make` to compile.
 
 ### OS X
 
-1. Install [brew](http://brew.sh/).
+1. Install [Homebrew](http://brew.sh/).
 2. Type `make` to install libraries and compile.
 
 ## Run the game
