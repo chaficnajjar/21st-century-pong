@@ -7,12 +7,13 @@ Pong clone written in C++ with SDL 2.0.
 
 ### Ubuntu
 
-You will need:
+You will need to download and install:
 
++ [SDL 2.0](https://www.libsdl.org/hg.php)
 + [SDL Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/)
 + [SDL TTF 2.0](https://www.libsdl.org/projects/SDL_ttf/)
 
-Just run `make` to compile and `./pong` to play.
+Then, just run `make` to compile.
 
 ### OS X
 
