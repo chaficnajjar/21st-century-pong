@@ -10,8 +10,11 @@
 #include "pong.hpp"
 #include "paddle.hpp"
 
-std::random_device rd;
-std::mt19937 gen(rd());
+// This will prevent linker errors in case the same names are used in other files
+namespace {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+}
 
 // Ball dimensions
 const int Ball::LENGTH = 10;
