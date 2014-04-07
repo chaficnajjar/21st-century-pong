@@ -23,12 +23,11 @@ public:
     static const int WIDTH;
 
     // Functions
-    int get_x();
-    int get_y();
+    int get_x() const;
+    int get_y() const;
     void set_y(int new_y);
     void add_to_y(int new_y);
-    int predict(Ball *ball);
-    void AI(Ball *ball);
+    int predict(Ball *ball); void AI(Ball *ball);
 };
 
 #endif

@@ -15,11 +15,11 @@ Paddle::Paddle(int new_x, int new_y){
     y = new_y;
 }
 
-int Paddle::get_x() {
+int Paddle::get_x() const {
     return x;
 }
 
-int Paddle::get_y() {
+int Paddle::get_y() const {
     return y;
 }
 
