@@ -3,10 +3,12 @@
  *  Ball class definitions
  */
 
+#include <random>
+#include <cmath>
+
 #include "ball.hpp"
 #include "pong.hpp"
 #include "paddle.hpp"
-#include <random>
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -42,8 +44,8 @@ void Ball::launch_ball(Paddle *ai_paddle) {
     std::uniform_int_distribution<int> ang(-60, 60);
     angle = ang(gen);                                           // between -60 and 60
 
-    dx = direction*speed*cos(angle*M_PI/180.0f);                // speed on the x-axis
-    dy = speed*sin(angle*M_PI/180.0f);                          // speed on the y-axis
+    dx = direction*speed*std::cos(angle*M_PI/180.0f);                // speed on the x-axis
+    dy = speed*std::sin(angle*M_PI/180.0f);                          // speed on the y-axis
 
     status = LAUNCHED;
 }
@@ -61,8 +63,8 @@ void Ball::bounces_off(Paddle *paddle) {
 
         angle = (2.14f * relative_y - 75.0f);
 
-        dx = sign*speed*cos(angle*M_PI/180.0f);     // convert angle to radian, find its cos() and multiply by the speed
-        dy = speed*sin(angle*M_PI/180.0f);          // convert angle to radina, find its sin() and multiply by the speed
+        dx = sign*speed*std::cos(angle*M_PI/180.0f);     // convert angle to radian, find its cos() and multiply by the speed
+        dy = speed*std::sin(angle*M_PI/180.0f);          // convert angle to radina, find its sin() and multiply by the speed
 
 }
 
