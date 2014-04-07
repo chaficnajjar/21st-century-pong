@@ -55,11 +55,7 @@ void Ball::bounces_off(Paddle *paddle) {
 
         hits++; 
 
-        int sign;
-        if (paddle->get_x() < Pong::SCREEN_WIDTH/2)
-            sign = 1;
-        else
-            sign = -1;
+        int sign = (paddle->get_x() < Pong::SCREEN_WIDTH/2) ? 1 : -1;
 
         int relative_y = (y - paddle->get_y() + LENGTH);
 
