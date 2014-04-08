@@ -88,11 +88,9 @@ bool Ball::collides_with(Paddle *paddle) {
     // left paddle
     if (paddle->get_x() < Pong::SCREEN_WIDTH/2) {
         // Check if collision with left paddle occurs in next frame
-        if ( x > paddle->get_x() + Paddle::WIDTH )
-            return false;
-        else if (x < paddle->get_x())
-            return false;
-        else if (!(y + LENGTH > paddle->get_y() && y <= paddle->get_y() + Paddle::HEIGHT))
+        if (x > paddle->get_x() + Paddle::WIDTH ||
+            x < paddle->get_x() ||
+            !(y + LENGTH > paddle->get_y() && y <= paddle->get_y() + Paddle::HEIGHT))
             return false;
         else
             return true;
@@ -101,11 +99,9 @@ bool Ball::collides_with(Paddle *paddle) {
     // right paddle
     else {
         // Check if collision with right paddle occurs in next frame
-        if ( x + LENGTH < paddle->get_x() )
-            return false;
-        else if (x > paddle->get_x() + Paddle::WIDTH)
-            return false;
-        else if (!(y + LENGTH > paddle->get_y() && y <= paddle->get_y() + Paddle::HEIGHT))
+        if (x + LENGTH < paddle->get_x() ||
+            x > paddle->get_x() + Paddle::WIDTH ||
+            !(y + LENGTH > paddle->get_y() && y <= paddle->get_y() + Paddle::HEIGHT))
             return false;
         else
             return true;
