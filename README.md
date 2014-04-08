@@ -32,7 +32,6 @@ To run the game, type `./pong`. You can type `./pong joystick` to play with the 
 + ~~Add joystick support~~
 + ~~Convert to OOP~~
 + ~~Test on OS X~~
-+ Add lua code
 + Processor independant game speed
 + Finish the Windows version
 + Add game menu
@@ -41,6 +40,8 @@ To run the game, type `./pong`. You can type `./pong joystick` to play with the 
 + Add multiplayer option (local and remote)
 + Add different resolutions
 + Add AI difficulty
++ Use C++11 smart pointers
++ Add lua code
 
 ## Credits
 
