@@ -50,15 +50,13 @@ public:
     int mouse_x, mouse_y;                   // mouse coordinates
 
     // Fonts
-    std::string fonts[2];                   // font names
-    SDL_Color dark_font;                    // dark font color
-    SDL_Color light_font;                   // light font color
+    std::string font_name;                  // font name
+    SDL_Color font_color;                   // font color
     SDL_Texture*    font_image_left_score;  // holds text indicating player 1 score (left)
     SDL_Texture*    font_image_right_score; // holds text indicating palyer 2 score (right)
     SDL_Texture*    font_image_winner;      // holds text indicating winner
     SDL_Texture*    font_image_restart;     // holds text suggesting to restart the game
-    SDL_Texture*    font_image_launch1;     // holds first part of text suggesting to launch the ball
-    SDL_Texture*    font_image_launch2;     // holds second part of text suggesting to launch the ball
+    SDL_Texture*    font_image_launch;     // holds first part of text suggesting to launch the ball
     
     // Scores
     int left_score;     

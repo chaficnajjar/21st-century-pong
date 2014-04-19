@@ -66,14 +66,11 @@ Pong::Pong(int argc, char *argv[]) {
     // Fonts
     TTF_Init();     // initialize font
 
-    dark_font = {67, 68, 69};       // dark grey
-    light_font = {187, 191, 194};   // light grey
+    font_color = {31, 51, 66, 255};
 
-    fonts[0] = "resources/fonts/Lato-Reg.TTF";
-    fonts[1] = "resources/fonts/FFFFORWA.TTF";
+    font_name = "resources/fonts/FFFFORWA.TTF";
 
-    font_image_launch1 = renderText("Press SPA", fonts[0], light_font, 18, renderer);
-    font_image_launch2 = renderText("CE to start", fonts[0], dark_font, 18, renderer);
+    font_image_launch = renderText("Press SPACE to start", font_name, font_color, 18, renderer);
 
     // Scores
     left_score = 0;
@@ -220,16 +217,11 @@ void Pong::update() {
 // Render objects on screen
 void Pong::render() {
     // Clear screen (background color)
-    SDL_SetRenderDrawColor( renderer, 67, 68, 69, 255 );        // dark grey
+    SDL_SetRenderDrawColor( renderer, 44, 102, 147, 255 );        // dark grey
     SDL_RenderClear(renderer);
 
-    // Color left background with light grey
-    SDL_Rect left_background = { SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT };
-    SDL_SetRenderDrawColor( renderer, 187, 191, 194, 255 );
-    SDL_RenderFillRect( renderer, &left_background );
-
     // Paddle color
-    SDL_SetRenderDrawColor( renderer, 212, 120, 102, 255 );
+    SDL_SetRenderDrawColor( renderer, 31, 51, 66, 255 );
 
     // Render filled paddle
     SDL_Rect paddle1 = { left_paddle->get_x(), left_paddle->get_y(), Paddle::WIDTH, Paddle::HEIGHT };
@@ -245,22 +237,22 @@ void Pong::render() {
 
     // Render scores
     if (left_score_changed) {
-        font_image_left_score = renderText(std::to_string(left_score), "resources/fonts/Lato-Reg.TTF", light_font, 24, renderer);
+        font_image_left_score = renderText(std::to_string(left_score), font_name, font_color, 24, renderer);
         left_score_changed = false;
         if (left_score == 5) {
-            font_image_winner = renderText("Player 1 won!", fonts[0], light_font, 24, renderer);
-            font_image_restart = renderText("Press SPACE to restart", fonts[0], light_font, 18, renderer);
+            font_image_winner = renderText("Player 1 won!", font_name, font_color, 24, renderer);
+            font_image_restart = renderText("Press SPACE to restart", font_name, font_color, 18, renderer);
         }
     }
     renderTexture(font_image_left_score, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
 
     int score_font_size = 24;
     if (right_score_changed) {
-        font_image_right_score = renderText(std::to_string(right_score), "resources/fonts/Lato-Reg.TTF", dark_font, score_font_size, renderer);
+        font_image_right_score = renderText(std::to_string(right_score), font_name, font_color, score_font_size, renderer);
         right_score_changed = false;
         if (right_score == 5) {
-            font_image_winner = renderText("Player 2 won!", fonts[0], dark_font, 24, renderer);
-            font_image_restart = renderText("Press SPACE to restart", fonts[0], dark_font, 18, renderer);
+            font_image_winner = renderText("Player 2 won!", font_name, font_color, 24, renderer);
+            font_image_restart = renderText("Press SPACE to restart", font_name, font_color, 18, renderer);
         }
 
     }
@@ -288,10 +280,8 @@ void Pong::render() {
     }
 
     // Draw "Press SPACE to start"
-    else if (!ball->status == ball->LAUNCHED) {
-        renderTexture(font_image_launch1, renderer, SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 25);
-        renderTexture(font_image_launch2, renderer, SCREEN_WIDTH / 2 + 1, SCREEN_HEIGHT - 25);
-    }
+    else if (ball->status == ball->READY)
+        renderTexture(font_image_launch, renderer, SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT - 25);
 
     // Swap buffers
     SDL_RenderPresent(renderer);
