@@ -14,11 +14,11 @@ const int Pong::SCREEN_HEIGHT = 480;
 
 Pong::Pong(int argc, char *argv[]) {
 
-    /* Initilize SDL */
+    // Intialize SDL
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_ShowCursor(0);      // don't show cursor
 
-    /* Window and renderer */
+    // Create window and renderer
     window = SDL_CreateWindow("Pong",
             SDL_WINDOWPOS_UNDEFINED,        // centered window
             SDL_WINDOWPOS_UNDEFINED,        // centered window
@@ -28,19 +28,18 @@ Pong::Pong(int argc, char *argv[]) {
             
     renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
-    /* Game objects */
+    // Instantiate game objects
     ball = new Ball(SCREEN_WIDTH/2-ball->LENGTH/2, SCREEN_HEIGHT/2);
     left_paddle = new Paddle(40, SCREEN_HEIGHT/2-30);
     right_paddle = new Paddle(SCREEN_WIDTH-(40+Paddle::WIDTH), SCREEN_HEIGHT/2-30);
 
-    /* Sounds */
+    // Sounds
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);  // initialize SDL_mixer
-
     paddle_sound = Mix_LoadWAV("resources/sounds/paddle_hit.wav");      // load paddle sound
     wall_sound = Mix_LoadWAV("resources/sounds/wall_hit.wav");          // load wall sound
     score_sound = Mix_LoadWAV("resources/sounds/score_update.wav");     // load score sound
 
-    /* Controllers */
+    // Controllers
     if (argc == 2) { 
         if ( strcmp(argv[1], "keyboard") == 0 )
             controller = keyboard;
@@ -64,7 +63,7 @@ Pong::Pong(int argc, char *argv[]) {
         gamepad_direction = 0;
     }
 
-    /* Fonts */
+    // Fonts
     TTF_Init();     // initialize font
 
     dark_font = {67, 68, 69};       // dark grey
@@ -76,13 +75,13 @@ Pong::Pong(int argc, char *argv[]) {
     font_image_launch1 = renderText("Press SPA", fonts[0], light_font, 18, renderer);
     font_image_launch2 = renderText("CE to start", fonts[0], dark_font, 18, renderer);
 
-    /* Scores */
+    // Scores
     left_score = 0;
     right_score = 0;
     left_score_changed = true;     // indicates when rendering new score is necessary 
     right_score_changed = true;    // indicates when rendering new score is necessary 
 
-    /* Game states */
+    // Game status
     exit = false;
 
 }
@@ -99,9 +98,7 @@ void Pong::execute() {
 }
 
 void Pong::input() {
-
-    //=== Handling events ===//
-
+    // Handle events
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
 
@@ -157,9 +154,7 @@ void Pong::input() {
 // Update game values
 void Pong::update() {
 
-    //=======================//
     //=== Paddle movement ===//
-
     // Right paddle follows the player's mouse on the y-axis
     if (controller == mouse)
         right_paddle->set_y(mouse_y);
@@ -172,9 +167,7 @@ void Pong::update() {
     left_paddle->AI(ball);
  
 
-    //===================//
     //=== Launch ball ===//
-
     if (ball->status == ball->READY)
         return;
 
@@ -183,21 +176,16 @@ void Pong::update() {
         ball->predicted_y = left_paddle->predict(ball);
     }
 
-
-    //=========================//
     //=== Update ball speed ===//
-
     ball->update_speed();
 
-
-    //=================//
     //=== Collision ===//
-
+    // Left paddle and ball collision
     if (ball->collides_with(left_paddle)) {
         ball->bounces_off(left_paddle);
         Mix_PlayChannel(-1, paddle_sound, 0);           // play collision sound
     }
-
+    // Right paddle and ball collision
     else if (ball->collides_with(right_paddle)) {
         ball->bounces_off(right_paddle);
         ball->predicted_y = left_paddle->predict(ball); // predict ball position on the y-axis
@@ -210,19 +198,12 @@ void Pong::update() {
         Mix_PlayChannel(-1, wall_sound, 0);             // play collision sound
     }
 
-
-    //===============================//
     //=== Update ball coordinates ===//
-
     ball->x += ball->dx;
     ball->y += ball->dy;
 
-
-    //=====================//
     //=== Ball goes out ===//
-
     if (ball->x > SCREEN_WIDTH || ball->x < 0) {
-
         // Change score
         if (ball->x > SCREEN_WIDTH) {
             left_score++;
@@ -231,17 +212,13 @@ void Pong::update() {
             right_score++;
             right_score_changed = true;
         }
-
         Mix_PlayChannel(-1, score_sound, 0); 
-
         ball->reset();
     }
-
 }
 
 // Render objects on screen
 void Pong::render() {
-
     // Clear screen (background color)
     SDL_SetRenderDrawColor( renderer, 67, 68, 69, 255 );        // dark grey
     SDL_RenderClear(renderer);
@@ -318,12 +295,10 @@ void Pong::render() {
 
     // Swap buffers
     SDL_RenderPresent(renderer);
-
 }
 
-//=== Release resources ===//
+// Release resources
 void Pong::clean_up() {
-
     // Destroy textures
     SDL_DestroyTexture(font_image_left_score);
     SDL_DestroyTexture(font_image_right_score);

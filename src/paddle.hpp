@@ -22,7 +22,6 @@ public:
     static const int HEIGHT;
     static const int WIDTH;
 
-    // Functions
     int get_x() const;
     int get_y() const;
     void set_y(int new_y);

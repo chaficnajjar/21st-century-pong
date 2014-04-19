@@ -16,36 +16,40 @@ class Ball;
 class Paddle;
 
 class Pong {
-
 public:
-    Pong(int argc, char *argv[]);
-    
-    /* Screen resolution */
+    // Screen resolution
     static const int SCREEN_WIDTH;
     static const int SCREEN_HEIGHT;
 
-    /* Window and renderer */
+    Pong(int argc, char *argv[]);
+    void execute();
+    void input();
+    void update();
+    void render();
+    void clean_up();
+
+    // Window and renderer
     SDL_Window* window;                     // holds window properties
     SDL_Renderer* renderer;                 // holds rendering surface properties
     
-    /* Game objects */
+    // Game objects
     Ball *ball;
     Paddle *left_paddle;
     Paddle *right_paddle;
 
-    /* Sounds */
+    // Sounds
     Mix_Chunk *paddle_sound;                // holds sound produced after ball collides with paddle
     Mix_Chunk *wall_sound;                  // holds sound produced after ball collides with wall
     Mix_Chunk *score_sound;                 // holds sound produced when updating score
 
-    /* Controllers */
+    // Controllers
     enum Controllers { mouse, keyboard, joystick };
     Controllers controller;
     SDL_Joystick *gamepad;                  // holds joystick information
     int gamepad_direction;                  // gamepad direction
     int mouse_x, mouse_y;                   // mouse coordinates
 
-    /* Fonts */
+    // Fonts
     std::string fonts[2];                   // font names
     SDL_Color dark_font;                    // dark font color
     SDL_Color light_font;                   // light font color
@@ -56,24 +60,14 @@ public:
     SDL_Texture*    font_image_launch1;     // holds first part of text suggesting to launch the ball
     SDL_Texture*    font_image_launch2;     // holds second part of text suggesting to launch the ball
     
-    /* Scores */
+    // Scores
     int left_score;     
     int right_score;
     bool left_score_changed;                // indicates when rendering new score is necessary 
     bool right_score_changed;               // indicates when rendering new score is necessary 
 
-    /* Game states */
+    // Game status
     bool exit;                              // true when player wants to exit game
-
-    /* Main functions */
-    void execute();
-
-    void input();
-    void update();
-    void render();
-
-    void clean_up();
-
 };
 
 #endif
