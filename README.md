@@ -3,6 +3,8 @@ The Pong game
 
 Pong clone written in C++ with SDL 2.0.
 
+![Screenshot](screenshot.png)
+
 ## Installation
 
 ### Ubuntu
