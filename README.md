@@ -49,6 +49,4 @@ To run the game, type `./pong`. You can type `./pong joystick` to play with the 
 
 Chafic Najjar - <chafic.najjar@gmail.com>
 
-Thank you [Piotr Yordanov](https://github.com/tUrG0n) for the Mac script and game theme colors.
-
-Thank you [Roy Naufal](https://github.com/roynaufal) for contrbuting to fixing the ball trajectory.
+Thank you [Piotr Yordanov](https://github.com/tUrG0n) and [Roy Naufal](https://github.com/roynaufal) for the help.
