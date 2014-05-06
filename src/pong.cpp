@@ -89,6 +89,7 @@ void Pong::execute() {
         input();
         update();
         render();
+        SDL_Delay(10);
     }
 
     clean_up();
