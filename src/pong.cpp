@@ -66,7 +66,7 @@ Pong::Pong(int argc, char *argv[]) {
     // Fonts
     TTF_Init();     // initialize font
 
-    font_color = {31, 51, 66, 255};
+    font_color = {255, 255, 255, 255};
 
     font_name = "resources/fonts/FFFFORWA.TTF";
 
@@ -218,11 +218,11 @@ void Pong::update() {
 // Render objects on screen
 void Pong::render() {
     // Clear screen (background color)
-    SDL_SetRenderDrawColor( renderer, 44, 102, 147, 255 );        // dark grey
+    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );        // dark grey
     SDL_RenderClear(renderer);
 
     // Paddle color
-    SDL_SetRenderDrawColor( renderer, 31, 51, 66, 255 );
+    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 
     // Render filled paddle
     SDL_Rect paddle1 = { left_paddle->get_x(), left_paddle->get_y(), Paddle::WIDTH, Paddle::HEIGHT };
