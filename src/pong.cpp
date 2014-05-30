@@ -242,7 +242,7 @@ void Pong::render() {
         left_score_changed = false;
         if (left_score == 5) {
             font_image_winner = renderText("Player 1 won!", font_name, font_color, 24, renderer);
-            font_image_restart = renderText("Press SPACE to restart", font_name, font_color, 18, renderer);
+            font_image_restart = renderText("Press SPACE to restart", font_name, font_color, 14, renderer);
         }
     }
     renderTexture(font_image_left_score, renderer, SCREEN_WIDTH * 4 / 10, SCREEN_HEIGHT / 12);
@@ -253,7 +253,7 @@ void Pong::render() {
         right_score_changed = false;
         if (right_score == 5) {
             font_image_winner = renderText("Player 2 won!", font_name, font_color, 24, renderer);
-            font_image_restart = renderText("Press SPACE to restart", font_name, font_color, 18, renderer);
+            font_image_restart = renderText("Press SPACE to restart", font_name, font_color, 14, renderer);
         }
 
     }
