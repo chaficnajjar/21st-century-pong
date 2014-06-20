@@ -30,8 +30,8 @@ Pong::Pong(int argc, char *argv[]) {
 
     // Instantiate game objects
     ball = new Ball(SCREEN_WIDTH/2-ball->LENGTH/2, SCREEN_HEIGHT/2-ball->LENGTH/2);
-    left_paddle = new Paddle(40, SCREEN_HEIGHT/2-30);
-    right_paddle = new Paddle(SCREEN_WIDTH-(40+Paddle::WIDTH), SCREEN_HEIGHT/2-30);
+    left_paddle = new Paddle(40, SCREEN_HEIGHT/2-Paddle::HEIGHT/2);
+    right_paddle = new Paddle(SCREEN_WIDTH-(40+Paddle::WIDTH), SCREEN_HEIGHT/2-Paddle::HEIGHT/2);
 
     // Sounds
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);  // initialize SDL_mixer
