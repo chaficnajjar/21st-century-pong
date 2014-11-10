@@ -12,6 +12,7 @@ Pong clone written in C++ with SDL 2.0.
 You will need to download and install:
 
 + [SDL 2.0](https://www.libsdl.org/hg.php)
++ [SDL Image 2.0](http://www.libsdl.org/projects/SDL_image/)
 + [SDL Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/)
 + [SDL TTF 2.0](https://www.libsdl.org/projects/SDL_ttf/)
 
@@ -21,6 +22,7 @@ Then, just type `make` to compile.
 
 1. Install [Homebrew](http://brew.sh/):
 	+ `brew install sdl2;`
+	+ `brew install sdl2_image;`
 	+ `brew install sdl2_ttf;`
 	+ `brew install sdl2_mixer;`
 2. Type `make` to install libraries and compile.
