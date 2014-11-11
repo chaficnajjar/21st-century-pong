@@ -21,11 +21,11 @@ Then, just type `make` to compile.
 ### OS X
 
 1. Install [Homebrew](http://brew.sh/):
-	+ `brew install sdl2;`
-	+ `brew install sdl2_image;`
-	+ `brew install sdl2_ttf;`
-	+ `brew install sdl2_mixer;`
-2. Type `make` to install libraries and compile.
+    + `brew install sdl2;`
+    + `brew install sdl2_image;`
+    + `brew install sdl2_ttf;`
+    + `brew install sdl2_mixer;`
+2. Type `make` to compile.
 
 ## Run the game
 
