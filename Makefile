@@ -2,7 +2,7 @@ CC = g++
 SRCS = src/main.cpp src/pong.cpp src/ball.cpp src/paddle.cpp src/utilities.cpp
 OBJS = main.o pong.o ball.o paddle.o utilities.o
 DEBUG = -g
-SDL_LIB = -lSDL2 -lSDL2_ttf -lSDL2_mixer `sdl2-config --libs`
+SDL_LIB = -lSDL2_ttf -lSDL2_mixer `sdl2-config --libs`
 SDL_INCLUDE = `sdl2-config --cflags`
 CFLAGS = -Wall -c -std=c++0x $(DEBUG) $(SDL_INCLUDE)
 LFLAGS = -Wall $(DEBUG) $(SDL_LIB)
