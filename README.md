@@ -3,7 +3,7 @@ The Pong game
 
 Pong clone written in C++ with SDL 2.0.
 
-![Screenshot](screenshot.png)
+![Screenshot](https://cloud.githubusercontent.com/assets/1498164/5608125/295a3186-9481-11e4-968b-04987a925a93.png)
 
 ## Installation
 
