@@ -31,25 +31,6 @@ Then, just type `make` to compile.
 
 To run the game, type `./pong`. You can type `./pong joystick` to play with the joystick.
 
-## To-do
-
-+ ~~Comment code~~
-+ ~~Enhence AI~~
-+ ~~Add collision sounds~~
-+ ~~Add joystick support~~
-+ ~~Convert to OOP~~
-+ ~~Test on OS X~~
-+ Processor independant game speed
-+ Finish the Windows version
-+ Add game menu
-+ Add themes
-+ Add keyboard support
-+ Add multiplayer option (local and remote)
-+ Add different resolutions
-+ Add AI difficulty
-+ Use C++11 smart pointers
-+ Add lua code
-
 ## Credits
 
 Chafic Najjar - <chafic.najjar@gmail.com>
