@@ -12,7 +12,6 @@ Pong clone written in C++ with SDL 2.0.
 You will need to download and install:
 
 + [SDL 2.0](https://www.libsdl.org/hg.php)
-+ [SDL Image 2.0](http://www.libsdl.org/projects/SDL_image/)
 + [SDL Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/)
 + [SDL TTF 2.0](https://www.libsdl.org/projects/SDL_ttf/)
 
@@ -58,6 +57,6 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-Created and maintained by [Chafic Najjar](https://github.com/chaficnajjar)
+Created by [Chafic Najjar](https://github.com/chaficnajjar).
 
 Thank you [Piotr Yordanov](https://github.com/tUrG0n) and [Roy Naufal](https://github.com/roynaufal) for the help.
