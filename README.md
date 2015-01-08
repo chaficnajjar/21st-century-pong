@@ -5,30 +5,41 @@ Pong clone written in C++ with SDL 2.0.
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/1498164/5608125/295a3186-9481-11e4-968b-04987a925a93.png)
 
-## Installation
+## Dependencies
 
-### Ubuntu
-
-You will need to download and install:
+You will need:
 
 + [SDL 2.0](https://www.libsdl.org/hg.php)
 + [SDL Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/)
 + [SDL TTF 2.0](https://www.libsdl.org/projects/SDL_ttf/)
 
-Then, just type `make` to compile.
+### Ubuntu
+
+`sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev`
 
 ### OS X
 
-1. Install [Homebrew](http://brew.sh/):
-    + `brew install sdl2;`
-    + `brew install sdl2_image;`
-    + `brew install sdl2_ttf;`
-    + `brew install sdl2_mixer;`
-2. Type `make` to compile.
+If you have [Homebrew](http://brew.sh/) installed:
+
+`brew install sdl2 sdl2_mixer sdl2_ttf`
+
+## Get Source and Build
+
+```
+git clone https://github.com/chaficnajjar/pong.git;
+cd pong;
+make;
+```
 
 ## Run the game
 
-To run the game, type `./pong`. You can type `./pong joystick` to play with the joystick.
+To run the game:
+
+`./pong`.
+
+To run the game with joystick support:
+
+`./pong joystick`
 
 ## License and Credits
 
