@@ -4,26 +4,30 @@ OBJS            := ${SRCS:.cpp=.o}
 
 DEBUG           := -g
 
-SDL_LIB         := `sdl2-config --libs` -lSDL2_ttf -lSDL2_mixer
 SDL_INCLUDE     := `sdl2-config --cflags`
+SDL_LIB         := `sdl2-config --libs` -lSDL2_ttf -lSDL2_mixer
 
 CPPFLAGS        := $(SDL_INCLUDE)
-CXXFLAGS        := -Wall -std=c++11
-LDFLAGS         = $(DEBUG) $(SDL_LIB)
+CXXFLAGS        := $(DEBUG) -Wall -std=c++11
+LDFLAGS         := $(SDL_LIB)
+
+.PHONY: all clean
 
 all: $(BINARY)
 
 $(BINARY): $(OBJS)
 	$(LINK.cc) $(OBJS) -o $(BINARY) $(LDFLAGS)
 
-depend: .depend
+-depend: src/.depend
 
-.depend: $(SRCS)
-	$(RM) ./.depend
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(DEBUG) -MM $^ > ./.depend;
+.generate_depend: $(SRCS)
+	@- $(RM) ./src/.depend
+	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ > ./src/.depend;
 
-include .depend
+-include .generate_depend
 
 clean:
-	$(RM) $(BINARY) $(OBJS) .depend
+	@- $(RM) $(BINARY)
+	@- $(RM) $(OBJS)
+	@- $(RM) src/.depend
 
