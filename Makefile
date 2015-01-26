@@ -18,16 +18,16 @@ all: $(BINARY)
 $(BINARY): $(OBJS)
 	$(LINK.cc) $(OBJS) -o $(BINARY) $(LDFLAGS)
 
--depend: src/.depend
+depend: .depend
 
-.generate_depend: $(SRCS)
-	@- $(RM) ./src/.depend
-	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ > ./src/.depend;
+.depend: $(SRCS)
+	@- $(RM) .depend
+	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ | sed -r 's|^([^ ])|src/\1|' > .depend;
 
--include .generate_depend
+include .depend
 
 clean:
 	@- $(RM) $(BINARY)
 	@- $(RM) $(OBJS)
-	@- $(RM) src/.depend
+	@- $(RM) .depend
 
