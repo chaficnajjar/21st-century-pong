@@ -28,9 +28,9 @@ Install the required build dependencies using [Homebrew](http://brew.sh/):
 ## Get Source and Build
 
 ```
-git clone https://github.com/chaficnajjar/pong.git;
-cd pong;
-make;
+git clone https://github.com/chaficnajjar/pong.git
+cd pong
+make
 ```
 
 ## Run the game
