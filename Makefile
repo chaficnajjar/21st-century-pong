@@ -24,7 +24,7 @@ depend: .depend
 	@- $(RM) .depend
 	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ | sed -r 's|^([^ ])|src/\1|' > .depend;
 
-include .depend
+-include .depend
 
 clean:
 	@- $(RM) $(BINARY)
