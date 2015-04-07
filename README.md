@@ -73,3 +73,5 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Created by [Chafic Najjar](https://github.com/chaficnajjar).
 
 Thank you [Piotr Yordanov](https://github.com/tUrG0n) and [Roy Naufal](https://github.com/roynaufal) for the help.
+
+**FFF Forward Font** by [Fonts For Flash](http://www.fontsforflash.com/).
