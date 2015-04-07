@@ -3,8 +3,8 @@
  *  Ball class declaration
  */
 
-#ifndef BALL_HPP
-#define BALL_HPP
+#ifndef BALL_H
+#define BALL_H
 
 class Paddle;
 
@@ -41,4 +41,4 @@ class Ball {
         void reset();
 };
 
-#endif
+#endif  // BALL_H

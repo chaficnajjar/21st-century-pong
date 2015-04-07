@@ -6,9 +6,9 @@
 #include <random>
 #include <cmath>
 
-#include "ball.hpp"
-#include "pong.hpp"
-#include "paddle.hpp"
+#include "ball.h"
+#include "pong.h"
+#include "paddle.h"
 
 // This will prevent linker errors in case the same names are used in other files
 namespace {
@@ -122,5 +122,3 @@ void Ball::reset() {
     speed = 8;
     hits = 0;
 }
-
-

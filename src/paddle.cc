@@ -3,9 +3,9 @@
  *  Paddle class definitions
  */
 
-#include "paddle.hpp"
-#include "pong.hpp"
-#include "ball.hpp"
+#include "paddle.h"
+#include "pong.h"
+#include "ball.h"
 
 const int Paddle::HEIGHT = 60;
 const int Paddle::WIDTH = 10;

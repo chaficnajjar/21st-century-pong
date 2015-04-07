@@ -3,8 +3,8 @@
  *  Pong class declaration
  */
 
-#ifndef PONG_HPP
-#define PONG_HPP
+#ifndef PONG_H
+#define PONG_H
 
 #include <SDL2/SDL.h>                       // SDL library
 #include <SDL2/SDL_ttf.h>                   // SDL font library
@@ -16,31 +16,20 @@ class Ball;
 class Paddle;
 
 class Pong {
-public:
-    // Screen resolution
-    static const int SCREEN_WIDTH;
-    static const int SCREEN_HEIGHT;
-
-    Pong(int argc, char *argv[]);
-    void execute();
-    void input();
-    void update();
-    void render();
-    void clean_up();
-
+private:
     // Window and renderer
     SDL_Window* window;                     // holds window properties
     SDL_Renderer* renderer;                 // holds rendering surface properties
     
     // Game objects
-    Ball *ball;
-    Paddle *left_paddle;
-    Paddle *right_paddle;
+    Ball* ball;
+    Paddle* left_paddle;
+    Paddle* right_paddle;
 
     // Sounds
-    Mix_Chunk *paddle_sound;                // holds sound produced after ball collides with paddle
-    Mix_Chunk *wall_sound;                  // holds sound produced after ball collides with wall
-    Mix_Chunk *score_sound;                 // holds sound produced when updating score
+    Mix_Chunk* paddle_sound;                // holds sound produced after ball collides with paddle
+    Mix_Chunk* wall_sound;                  // holds sound produced after ball collides with wall
+    Mix_Chunk* score_sound;                 // holds sound produced when updating score
 
     // Controllers
     enum Controllers { mouse, keyboard, joystick };
@@ -56,7 +45,7 @@ public:
     SDL_Texture*    font_image_right_score; // holds text indicating palyer 2 score (right)
     SDL_Texture*    font_image_winner;      // holds text indicating winner
     SDL_Texture*    font_image_restart;     // holds text suggesting to restart the game
-    SDL_Texture*    font_image_launch;     // holds first part of text suggesting to launch the ball
+    SDL_Texture*    font_image_launch;      // holds first part of text suggesting to launch the ball
     
     // Scores
     int left_score;     
@@ -66,6 +55,17 @@ public:
 
     // Game status
     bool exit;                              // true when player wants to exit game
+public:
+    // Screen resolution
+    static const int SCREEN_WIDTH;
+    static const int SCREEN_HEIGHT;
+
+    Pong(int argc, char *argv[]);
+    ~Pong();
+    void execute();
+    void input();
+    void update();
+    void render();
 };
 
-#endif
+#endif  // PONG_H

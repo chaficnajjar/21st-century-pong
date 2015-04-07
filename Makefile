@@ -1,6 +1,6 @@
 BINARY          := pong
-SRCS            := $(wildcard src/*.cpp)
-OBJS            := $(SRCS:.cpp=.o)
+SRCS            := $(wildcard src/*.cc)
+OBJS            := $(SRCS:.cc=.o)
 
 DEBUG           := -g
 

@@ -3,8 +3,8 @@
  *  Paddle class declaration
  */
 
-#ifndef PADDLE_HPP
-#define PADDLE_HPP
+#ifndef PADDLE_H
+#define PADDLE_H
 
 class Ball;
 
@@ -17,7 +17,6 @@ private:
 public:
     Paddle(int x, int y);
 
-public:
     // Paddle dimensions
     static const int HEIGHT;
     static const int WIDTH;
@@ -29,4 +28,4 @@ public:
     int predict(Ball *ball); void AI(Ball *ball);
 };
 
-#endif
+#endif  // PADDLE_H

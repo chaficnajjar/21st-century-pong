@@ -3,10 +3,10 @@
  *  Pong class definition
  */
 
-#include "pong.hpp"
-#include "ball.hpp"
-#include "paddle.hpp"
-#include "utilities.hpp"
+#include "pong.h"
+#include "ball.h"
+#include "paddle.h"
+#include "utilities.h"
 
 /* Screen resolution */
 const int Pong::SCREEN_WIDTH = 640;
@@ -16,7 +16,9 @@ Pong::Pong(int argc, char *argv[]) {
 
     // Intialize SDL
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_ShowCursor(0);      // don't show cursor
+
+    // Don't show cursor
+    SDL_ShowCursor(0);
 
     // Create window and renderer
     window = SDL_CreateWindow("Pong",
@@ -65,11 +67,8 @@ Pong::Pong(int argc, char *argv[]) {
 
     // Fonts
     TTF_Init();     // initialize font
-
     font_color = {255, 255, 255, 255};
-
     font_name = "resources/fonts/FFFFORWA.TTF";
-
     font_image_launch = renderText("Press SPACE to start", font_name, font_color, 18, renderer);
 
     // Scores
@@ -84,21 +83,18 @@ Pong::Pong(int argc, char *argv[]) {
 }
 
 void Pong::execute() {
-
-    while(!exit) {
+    while (!exit) {
         input();
         update();
         render();
         SDL_Delay(10);
     }
-
-    clean_up();
 }
 
 void Pong::input() {
     // Handle events
     SDL_Event event;
-    while(SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event)) {
 
         // Track mouse movement
         if (event.type == SDL_MOUSEMOTION)
@@ -289,7 +285,7 @@ void Pong::render() {
 }
 
 // Release resources
-void Pong::clean_up() {
+Pong::~Pong() {
     // Destroy textures
     SDL_DestroyTexture(font_image_left_score);
     SDL_DestroyTexture(font_image_right_score);

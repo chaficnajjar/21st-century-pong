@@ -1,6 +1,8 @@
 
-#include "utilities.hpp"
+#include "utilities.h"
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip) {
     SDL_RenderCopy(ren, tex, clip, &dst);
@@ -32,4 +34,3 @@ SDL_Texture* renderText(const std::string &message, const std::string &fontFile,
     TTF_CloseFont(font);
     return texture;
 }
-
