@@ -3,10 +3,11 @@
  *  Ball class definitions
  */
 
-#include <random>
-#include <cmath>
-
 #include "ball.h"
+
+#include <cmath>
+#include <random>
+
 #include "pong.h"
 #include "paddle.h"
 
