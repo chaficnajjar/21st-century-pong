@@ -43,6 +43,10 @@ To run the game with joystick support:
 
 `./pong joystick`
 
+## Contribute
+
+If you would like to contribute, please make sure you follow the [Google C++ Style Guide](http://google-styleguide.googlecode.com/svn/trunk/cppguide.html).
+
 ## License and Credits
 
 Pong code is MIT licensed

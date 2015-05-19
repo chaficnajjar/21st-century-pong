@@ -1,20 +1,17 @@
+// Copyright [2015] <Chafic Najjar>
 
-/*
- *  Paddle class declaration
- */
-
-#ifndef PADDLE_H
-#define PADDLE_H
+#ifndef SRC_PADDLE_H_
+#define SRC_PADDLE_H_
 
 class Ball;
 
 class Paddle {
-private:
+ private:
     // Paddle position
     int x;
     int y;
-    
-public:
+
+ public:
     Paddle(int x, int y);
 
     // Paddle dimensions
@@ -28,4 +25,4 @@ public:
     int predict(Ball *ball); void AI(Ball *ball);
 };
 
-#endif  // PADDLE_H
+#endif  // SRC_PADDLE_H_
