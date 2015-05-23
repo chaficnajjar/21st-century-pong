@@ -1,12 +1,12 @@
 // Copyright [2015] <Chafic Najjar>
 
-#include "pong.h"
+#include "src/pong.h"
 
 #include <iostream>
 
-#include "ball.h"
-#include "paddle.h"
-#include "utilities.h"
+#include "src/ball.h"
+#include "src/paddle.h"
+#include "src/utilities.h"
 
 // Screen resolution.
 const int Pong::SCREEN_WIDTH = 640;

@@ -1,9 +1,9 @@
 // Copyright [2015] <Chafic Najjar>
 
-#include "paddle.h"
+#include "src/paddle.h"
 
-#include "ball.h"
-#include "pong.h"
+#include "src/ball.h"
+#include "src/pong.h"
 
 const int Paddle::HEIGHT = 60;
 const int Paddle::WIDTH = 10;

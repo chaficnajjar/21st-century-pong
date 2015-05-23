@@ -1,6 +1,6 @@
 // Copyright [2015] <Chafic Najjar>
 
-#include "utilities.h"
+#include "src/utilities.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>

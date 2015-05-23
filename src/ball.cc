@@ -1,12 +1,12 @@
 // Copyright [2015] <Chafic Najjar>
 
-#include "ball.h"
+#include "src/ball.h"
 
 #include <cmath>
 #include <random>
 
-#include "pong.h"
-#include "paddle.h"
+#include "src/pong.h"
+#include "src/paddle.h"
 
 // This will prevent linker errors in case the same
 // names are used in other files.
