@@ -51,22 +51,21 @@ void Ball::launch_ball(Paddle *ai_paddle) {
 }
 
 void Ball::bounces_off(Paddle *paddle) {
-    if (paddle == nullptr)
-        return;
+    if (paddle == nullptr) return;
 
-        hits++;
+    hits++;
 
-        int sign = (paddle->get_x() < Pong::SCREEN_WIDTH/2) ? 1 : -1;
+    int sign = (paddle->get_x() < Pong::SCREEN_WIDTH/2) ? 1 : -1;
 
-        int relative_y = (y - paddle->get_y() + LENGTH);
+    int relative_y = (y - paddle->get_y() + LENGTH);
 
-        angle = (2.14f * relative_y - 75.0f);
+    angle = (2.14f * relative_y - 75.0f);
 
-        // Convert angle to radian, find its cos() and multiply by the speed.
-        dx = sign*speed*std::cos(angle*M_PI/180.0f);
+    // Convert angle to radian, find its cos() and multiply by the speed.
+    dx = sign*speed*std::cos(angle*M_PI/180.0f);
 
-        // Convert angle to radina, find its sin() and multiply by the speed.
-        dy = speed*std::sin(angle*M_PI/180.0f);
+    // Convert angle to radina, find its sin() and multiply by the speed.
+    dy = speed*std::sin(angle*M_PI/180.0f);
 }
 
 void Ball::update_speed() {

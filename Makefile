@@ -4,10 +4,10 @@ OBJS            := $(SRCS:.cc=.o)
 
 DEBUG           := -g
 
-SDL_INCLUDE     := `sdl2-config --cflags` -I.
+SDL_INCLUDE     := `sdl2-config --cflags`
 SDL_LIB         := `sdl2-config --libs` -lSDL2_ttf -lSDL2_mixer
 
-CPPFLAGS        += $(SDL_INCLUDE)
+CPPFLAGS        += $(SDL_INCLUDE) -I.
 CXXFLAGS        += $(DEBUG) -Wall -std=c++11
 LDFLAGS         += $(SDL_LIB)
 
