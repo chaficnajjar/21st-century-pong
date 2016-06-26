@@ -1,0 +1,11 @@
+NES Chimera
+
+Version 1.16.4.11
+
+More updates planned to improve and add more glyphs.
+
+Some symbols are in weird places. Beware.
+
+Font is not super great yet.
+
+Font is meant to be used at 8px as a pixel font. You can use a bitmap font generator on it to get a bitmap font of it if you need that.

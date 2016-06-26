@@ -83,9 +83,9 @@ Pong::Pong(int argc, char *argv[]) {
     // Fonts.
     TTF_Init();  // Initialize font.
     font_color = {255, 255, 255, 255};
-    font_name = "resources/fonts/FFFFORWA.TTF";
+    font_name = "resources/fonts/NES-Chimera/NES-Chimera.ttf";
     font_image_launch = renderText("Press SPACE to start",
-            font_name, font_color, 18, renderer);
+            font_name, font_color, 16, renderer);
 
     // Scores.
     left_score = 0;
@@ -351,7 +351,7 @@ void Pong::render() {
     } else if (ball->status == ball->READY) {
         // Draw "Press SPACE to start".
         renderTexture(font_image_launch,
-                renderer, SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT - 25);
+                renderer, SCREEN_WIDTH / 2 - 160, SCREEN_HEIGHT - 30);
     }
 
     // Swap buffers.
