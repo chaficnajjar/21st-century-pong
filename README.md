@@ -1,7 +1,7 @@
 Pong clone
 =============
 
-Pong clone written in C++ with SDL 2.0.
+Pong clone for Linux written in C++ with SDL 2.0.
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/1498164/5608125/295a3186-9481-11e4-968b-04987a925a93.png)
 
@@ -18,12 +18,6 @@ You will need:
 Install all dependencies on Ubuntu 14.04 and above:
 
 `sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev`
-
-### Mac OS X
-
-Install the required build dependencies using [Homebrew](http://brew.sh/):
-
-`brew install sdl2 sdl2_mixer sdl2_ttf`
 
 ## Get Source and Build
 
